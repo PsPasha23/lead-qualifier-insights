@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Info, Mail, Building, Save, Target, TrendingUp, TrendingDown, Shield, Copy, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CustomCriteriaConfig from "@/components/CustomCriteriaConfig";
@@ -34,6 +36,7 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
     region: { enabled: false, selectedValues: [] as string[] },
     role: { enabled: true, selectedValues: [] as string[] }
   });
+  const [abuseDetectionAccordion, setAbuseDetectionAccordion] = useState("");
 
   const handleSave = () => {
     toast({
@@ -76,6 +79,10 @@ document.getElementById('signup-button').addEventListener('click', function(e) {
       low: "bg-red-100 text-red-800 border-red-200"
     };
     return <Badge className={`${colors[score as keyof typeof colors]} border`}>{score.toUpperCase()}</Badge>;
+  };
+
+  const handleAbuseDetectionLinkClick = () => {
+    setAbuseDetectionAccordion("abuse-detection");
   };
 
   return (
@@ -249,10 +256,75 @@ document.getElementById('signup-button')
                         </Select>
                       </div>
                     </div>
-                    <div className="text-xs text-red-600 font-medium">
+                    <div className="text-xs text-red-600 font-medium mb-3">
                       ⚠️ Emails from suspicious sources are less likely to convert
                     </div>
+                    
+                    <div className="mt-4">
+                      <button
+                        onClick={handleAbuseDetectionLinkClick}
+                        className="text-sm text-blue-600 hover:text-blue-800 underline flex items-center"
+                      >
+                        <Shield className="h-3 w-3 mr-1" />
+                        Learn about Advanced Abuse Detection
+                      </button>
+                    </div>
                   </div>
+
+                  <Accordion type="single" collapsible value={abuseDetectionAccordion} onValueChange={setAbuseDetectionAccordion}>
+                    <AccordionItem value="abuse-detection" className="border-orange-200">
+                      <AccordionTrigger className="text-orange-900 hover:text-orange-700">
+                        <div className="flex items-center">
+                          <Shield className="h-4 w-4 mr-2" />
+                          AI-Powered Abuse Detection Details
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-3">
+                              <h4 className="font-semibold text-orange-900">Current vs Upgraded Detection</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-orange-800">Accuracy Rate:</span>
+                                  <span className="font-medium">60% → 95%</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-orange-800">Detection Speed:</span>
+                                  <span className="font-medium">Manual → Real-time</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-orange-800">False Positives:</span>
+                                  <span className="font-medium">High → Minimal</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <h4 className="font-semibold text-green-900">Advanced Features</h4>
+                              <ul className="space-y-1 text-sm text-green-800">
+                                <li>• Behavioral pattern analysis</li>
+                                <li>• IP reputation checking</li>
+                                <li>• Disposable email detection</li>
+                                <li>• Machine learning classification</li>
+                                <li>• Custom whitelist/blacklist</li>
+                              </ul>
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-3 pt-4 border-t border-orange-200">
+                            <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white">
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Upgrade Now - $29/month
+                            </Button>
+                            <Button variant="outline" className="border-orange-300 text-orange-700">
+                              View Demo
+                            </Button>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               </CardContent>
             </Card>
