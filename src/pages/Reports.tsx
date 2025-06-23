@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -363,134 +364,198 @@ const Reports = () => {
             Email Distribution Heatmap
           </CardTitle>
           <CardDescription>
-            Visual representation of email types across months with color intensity indicating volume
+            Visual representation of email types across months with color intensity indicating volume.
+            Business Rate = % of business emails, Personal Rate = % of personal emails in each month.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Heatmap Header */}
-            <div className="grid grid-cols-7 gap-2 text-sm font-medium text-slate-600">
-              <div className="text-center">Month</div>
-              <div className="text-center">Business</div>
-              <div className="text-center">Personal</div>
-              <div className="text-center">Abusive</div>
-              <div className="text-center">Total</div>
-              <div className="text-center">B Rate</div>
-              <div className="text-center">P Rate</div>
+            {/* Heatmap Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                {/* Header Row */}
+                <thead>
+                  <tr className="text-sm font-medium text-slate-600">
+                    <th className="text-left p-2 min-w-[80px]">Email Type</th>
+                    {emailDistributionData.map((data) => (
+                      <th key={data.month} className="text-center p-2 min-w-[80px]">{data.month}</th>
+                    ))}
+                    <th className="text-center p-2 min-w-[100px]">Avg Volume</th>
+                  </tr>
+                </thead>
+                <tbody className="space-y-2">
+                  {/* Business Row */}
+                  <tr>
+                    <td className="p-2 font-medium text-blue-700 bg-blue-50 rounded-l">Business</td>
+                    {emailDistributionData.map((monthData) => {
+                      const intensity = Math.min((monthData.business / 600) * 100, 100);
+                      return (
+                        <td key={`business-${monthData.month}`} className="p-2">
+                          <div 
+                            className="text-center py-2 px-1 rounded font-medium relative group cursor-pointer transition-all"
+                            style={{ 
+                              backgroundColor: `rgba(59, 130, 246, ${intensity / 100})`,
+                              color: intensity > 50 ? 'white' : '#1e293b'
+                            }}
+                          >
+                            {monthData.business}
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Business: {monthData.business} ({((monthData.business / monthData.total) * 100).toFixed(1)}%)
+                            </div>
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="p-2 text-center font-medium text-slate-600">
+                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.business, 0) / emailDistributionData.length)}
+                    </td>
+                  </tr>
+
+                  {/* Personal Row */}
+                  <tr>
+                    <td className="p-2 font-medium text-purple-700 bg-purple-50 rounded-l">Personal</td>
+                    {emailDistributionData.map((monthData) => {
+                      const intensity = Math.min((monthData.personal / 400) * 100, 100);
+                      return (
+                        <td key={`personal-${monthData.month}`} className="p-2">
+                          <div 
+                            className="text-center py-2 px-1 rounded font-medium relative group cursor-pointer transition-all"
+                            style={{ 
+                              backgroundColor: `rgba(139, 92, 246, ${intensity / 100})`,
+                              color: intensity > 50 ? 'white' : '#1e293b'
+                            }}
+                          >
+                            {monthData.personal}
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Personal: {monthData.personal} ({((monthData.personal / monthData.total) * 100).toFixed(1)}%)
+                            </div>
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="p-2 text-center font-medium text-slate-600">
+                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.personal, 0) / emailDistributionData.length)}
+                    </td>
+                  </tr>
+
+                  {/* Abusive Row */}
+                  <tr>
+                    <td className="p-2 font-medium text-red-700 bg-red-50 rounded-l">Abusive</td>
+                    {emailDistributionData.map((monthData) => {
+                      const intensity = Math.min((monthData.abusive / 50) * 100, 100);
+                      return (
+                        <td key={`abusive-${monthData.month}`} className="p-2">
+                          <div 
+                            className="text-center py-2 px-1 rounded font-medium relative group cursor-pointer transition-all"
+                            style={{ 
+                              backgroundColor: `rgba(239, 68, 68, ${intensity / 100})`,
+                              color: intensity > 50 ? 'white' : '#1e293b'
+                            }}
+                          >
+                            {monthData.abusive}
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Abusive: {monthData.abusive} ({((monthData.abusive / monthData.total) * 100).toFixed(1)}%)
+                            </div>
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="p-2 text-center font-medium text-slate-600">
+                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.abusive, 0) / emailDistributionData.length)}
+                    </td>
+                  </tr>
+
+                  {/* Total Row */}
+                  <tr className="border-t-2 border-slate-200">
+                    <td className="p-2 font-bold text-green-700 bg-green-50 rounded-l">Total</td>
+                    {emailDistributionData.map((monthData) => {
+                      const intensity = Math.min((monthData.total / 1000) * 100, 100);
+                      return (
+                        <td key={`total-${monthData.month}`} className="p-2">
+                          <div 
+                            className="text-center py-2 px-1 rounded font-bold relative group cursor-pointer transition-all"
+                            style={{ 
+                              backgroundColor: `rgba(16, 185, 129, ${intensity / 100})`,
+                              color: intensity > 50 ? 'white' : '#1e293b'
+                            }}
+                          >
+                            {monthData.total}
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Total Leads: {monthData.total}
+                            </div>
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="p-2 text-center font-bold text-slate-600">
+                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.total, 0) / emailDistributionData.length)}
+                    </td>
+                  </tr>
+
+                  {/* Percentage Breakdown Rows */}
+                  <tr className="border-t border-slate-100">
+                    <td className="p-2 text-sm font-medium text-slate-600 bg-slate-50 rounded-l">Business %</td>
+                    {emailDistributionData.map((monthData) => (
+                      <td key={`business-rate-${monthData.month}`} className="p-2 text-center text-sm font-medium text-slate-600">
+                        {((monthData.business / monthData.total) * 100).toFixed(1)}%
+                      </td>
+                    ))}
+                    <td className="p-2 text-center text-sm font-medium text-slate-600">
+                      {(emailDistributionData.reduce((sum, data) => sum + (data.business / data.total), 0) / emailDistributionData.length * 100).toFixed(1)}%
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="p-2 text-sm font-medium text-slate-600 bg-slate-50 rounded-l">Personal %</td>
+                    {emailDistributionData.map((monthData) => (
+                      <td key={`personal-rate-${monthData.month}`} className="p-2 text-center text-sm font-medium text-slate-600">
+                        {((monthData.personal / monthData.total) * 100).toFixed(1)}%
+                      </td>
+                    ))}
+                    <td className="p-2 text-center text-sm font-medium text-slate-600">
+                      {(emailDistributionData.reduce((sum, data) => sum + (data.personal / data.total), 0) / emailDistributionData.length * 100).toFixed(1)}%
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             
-            {/* Heatmap Rows */}
-            {emailDistributionData.map((monthData) => {
-              const businessIntensity = Math.min((monthData.business / 600) * 100, 100);
-              const personalIntensity = Math.min((monthData.personal / 400) * 100, 100);
-              const abusiveIntensity = Math.min((monthData.abusive / 50) * 100, 100);
-              const totalIntensity = Math.min((monthData.total / 1000) * 100, 100);
-              const businessRate = ((monthData.business / monthData.total) * 100).toFixed(1);
-              const personalRate = ((monthData.personal / monthData.total) * 100).toFixed(1);
-              
-              return (
-                <div key={monthData.month} className="grid grid-cols-7 gap-2 text-sm">
-                  <div className="text-center font-medium py-2">{monthData.month}</div>
-                  
-                  <div 
-                    className="text-center py-2 rounded text-white font-medium relative group cursor-pointer"
-                    style={{ 
-                      backgroundColor: `rgba(59, 130, 246, ${businessIntensity / 100})`,
-                      color: businessIntensity > 50 ? 'white' : '#1e293b'
-                    }}
-                  >
-                    {monthData.business}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      Business Emails: {monthData.business}
-                    </div>
+            {/* Heatmap Legend */}
+            <div className="mt-6 pt-4 border-t">
+              <div className="text-sm font-medium text-slate-700 mb-3">Color Intensity Legend</div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-4 h-4 bg-blue-200 rounded"></div>
+                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                    <div className="w-4 h-4 bg-blue-700 rounded"></div>
                   </div>
-                  
-                  <div 
-                    className="text-center py-2 rounded text-white font-medium relative group cursor-pointer"
-                    style={{ 
-                      backgroundColor: `rgba(139, 92, 246, ${personalIntensity / 100})`,
-                      color: personalIntensity > 50 ? 'white' : '#1e293b'
-                    }}
-                  >
-                    {monthData.personal}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      Personal Emails: {monthData.personal}
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className="text-center py-2 rounded text-white font-medium relative group cursor-pointer"
-                    style={{ 
-                      backgroundColor: `rgba(239, 68, 68, ${abusiveIntensity / 100})`,
-                      color: abusiveIntensity > 50 ? 'white' : '#1e293b'
-                    }}
-                  >
-                    {monthData.abusive}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      Abusive Emails: {monthData.abusive}
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className="text-center py-2 rounded font-medium relative group cursor-pointer"
-                    style={{ 
-                      backgroundColor: `rgba(16, 185, 129, ${totalIntensity / 100})`,
-                      color: totalIntensity > 50 ? 'white' : '#1e293b'
-                    }}
-                  >
-                    {monthData.total}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      Total Leads: {monthData.total}
-                    </div>
-                  </div>
-                  
-                  <div className="text-center py-2 text-slate-600 font-medium">
-                    {businessRate}%
-                  </div>
-                  
-                  <div className="text-center py-2 text-slate-600 font-medium">
-                    {personalRate}%
-                  </div>
+                  <span className="text-slate-600">Business (Low → High)</span>
                 </div>
-              );
-            })}
-          </div>
-          
-          {/* Heatmap Legend */}
-          <div className="mt-6 pt-4 border-t">
-            <div className="text-sm font-medium text-slate-700 mb-3">Color Intensity Legend</div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-              <div className="flex items-center space-x-2">
-                <div className="flex space-x-1">
-                  <div className="w-4 h-4 bg-blue-200 rounded"></div>
-                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                  <div className="w-4 h-4 bg-blue-700 rounded"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-4 h-4 bg-purple-200 rounded"></div>
+                    <div className="w-4 h-4 bg-purple-500 rounded"></div>
+                    <div className="w-4 h-4 bg-purple-700 rounded"></div>
+                  </div>
+                  <span className="text-slate-600">Personal (Low → High)</span>
                 </div>
-                <span className="text-slate-600">Business (Low → High)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="flex space-x-1">
-                  <div className="w-4 h-4 bg-purple-200 rounded"></div>
-                  <div className="w-4 h-4 bg-purple-500 rounded"></div>
-                  <div className="w-4 h-4 bg-purple-700 rounded"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-4 h-4 bg-red-200 rounded"></div>
+                    <div className="w-4 h-4 bg-red-500 rounded"></div>
+                    <div className="w-4 h-4 bg-red-700 rounded"></div>
+                  </div>
+                  <span className="text-slate-600">Abusive (Low → High)</span>
                 </div>
-                <span className="text-slate-600">Personal (Low → High)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="flex space-x-1">
-                  <div className="w-4 h-4 bg-red-200 rounded"></div>
-                  <div className="w-4 h-4 bg-red-500 rounded"></div>
-                  <div className="w-4 h-4 bg-red-700 rounded"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-4 h-4 bg-green-200 rounded"></div>
+                    <div className="w-4 h-4 bg-green-500 rounded"></div>
+                    <div className="w-4 h-4 bg-green-700 rounded"></div>
+                  </div>
+                  <span className="text-slate-600">Total (Low → High)</span>
                 </div>
-                <span className="text-slate-600">Abusive (Low → High)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="flex space-x-1">
-                  <div className="w-4 h-4 bg-green-200 rounded"></div>
-                  <div className="w-4 h-4 bg-green-500 rounded"></div>
-                  <div className="w-4 h-4 bg-green-700 rounded"></div>
-                </div>
-                <span className="text-slate-600">Total (Low → High)</span>
               </div>
             </div>
           </div>
