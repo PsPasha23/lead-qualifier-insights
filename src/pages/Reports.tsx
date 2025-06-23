@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from "recharts";
-import { TrendingUp, TrendingDown, Download, Calendar, Settings, Edit } from "lucide-react";
+import { TrendingUp, TrendingDown, Download, Calendar, Settings, Edit, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SegmentManager, { Segment } from "@/components/SegmentManager";
 import LeadTable from "@/components/LeadTable";
@@ -319,6 +318,44 @@ const Reports = () => {
           </Button>
         </div>
       </div>
+
+      {/* Abuse Detection Upgrade Banner */}
+      <Card className="border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-5 w-5 text-orange-600" />
+                <Zap className="h-4 w-4 text-yellow-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-orange-900">
+                  Reduce low-quality leads by 40% with AI-powered abuse detection
+                </h3>
+                <p className="text-sm text-orange-700">
+                  Your current {kpiData.lowQualityRate}% low-quality rate could be improved to ~10% with advanced protection
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsSettingsModalOpen(true)}
+                className="border-orange-300 text-orange-700 hover:bg-orange-100"
+              >
+                Learn More
+              </Button>
+              <Button 
+                size="sm"
+                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+              >
+                Upgrade Now
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* KPI Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

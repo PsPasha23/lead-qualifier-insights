@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Info, Mail, Building, Save, Target, TrendingUp, TrendingDown } from "lucide-react";
+import { Info, Mail, Building, Save, Target, TrendingUp, TrendingDown, Shield, Copy, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CustomCriteriaConfig from "@/components/CustomCriteriaConfig";
 
@@ -44,6 +43,32 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
     onOpenChange(false);
   };
 
+  const handleCopyCode = () => {
+    const code = `// Add this to your signup form
+document.getElementById('signup-button').addEventListener('click', function(e) {
+  const email = document.getElementById('email').value;
+  
+  // Send email for abuse detection
+  fetch('/api/abuse-detection', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  }).then(response => response.json())
+    .then(data => {
+      if (data.isAbusive) {
+        e.preventDefault();
+        alert('Invalid email detected');
+      }
+    });
+});`;
+    
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Code Copied",
+      description: "JavaScript code has been copied to your clipboard.",
+    });
+  };
+
   const getScoreBadge = (score: string) => {
     const colors = {
       high: "bg-green-100 text-green-800 border-green-200",
@@ -64,6 +89,81 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Abuse Detection Addon Promotion */}
+          <Card className="border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-red-50">
+            <CardHeader className="bg-gradient-to-r from-orange-100 to-red-100 border-b border-orange-200">
+              <CardTitle className="flex items-center text-orange-900">
+                <Shield className="h-5 w-5 mr-2 text-orange-600" />
+                🚀 Upgrade to Advanced Abuse Detection
+              </CardTitle>
+              <CardDescription className="text-orange-700">
+                Protect your platform from fake signups and improve lead quality by 40%
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-orange-900">Current: Basic Detection</h4>
+                    <Badge variant="outline" className="border-orange-300 text-orange-700">FREE</Badge>
+                  </div>
+                  <ul className="space-y-2 text-sm text-orange-800">
+                    <li>• Simple domain blacklist</li>
+                    <li>• Manual review required</li>
+                    <li>• 60% accuracy rate</li>
+                  </ul>
+                  
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-green-900">Upgrade: AI-Powered Detection</h4>
+                    <Badge className="bg-green-600 text-white">$29/month</Badge>
+                  </div>
+                  <ul className="space-y-2 text-sm text-green-800">
+                    <li>• Real-time AI analysis</li>
+                    <li>• Behavioral pattern detection</li>
+                    <li>• 95% accuracy rate</li>
+                    <li>• Auto-block suspicious emails</li>
+                  </ul>
+                  
+                  <Button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Upgrade to Pro Detection
+                  </Button>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-slate-900">Quick Setup Integration</h4>
+                  <p className="text-sm text-slate-600 mb-3">
+                    Add this JavaScript code to your signup form to enable real-time abuse detection:
+                  </p>
+                  <div className="bg-slate-900 text-green-400 p-4 rounded-lg text-xs font-mono overflow-x-auto">
+                    <pre>{`// Add this to your signup form
+document.getElementById('signup-button')
+  .addEventListener('click', function(e) {
+  const email = document.getElementById('email').value;
+  
+  // Send email for abuse detection
+  fetch('/api/abuse-detection', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  }).then(response => response.json())
+    .then(data => {
+      if (data.isAbusive) {
+        e.preventDefault();
+        alert('Invalid email detected');
+      }
+    });
+});`}</pre>
+                  </div>
+                  <Button variant="outline" onClick={handleCopyCode} className="w-full">
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy Integration Code
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="border-2 border-slate-200">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
