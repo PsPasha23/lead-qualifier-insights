@@ -412,7 +412,7 @@ const Reports = () => {
                   stroke="#ef4444" 
                   strokeDasharray="5 5" 
                   strokeWidth={2}
-                  label={{ value: `Goal: ${qualificationGoal}%`, position: "topRight", fontSize: 12, fill: "#ef4444" }}
+                  label={{ value: `Goal: ${qualificationGoal}%`, position: "top", fontSize: 12, fill: "#ef4444" }}
                 />
                 <Line 
                   type="monotone" 
