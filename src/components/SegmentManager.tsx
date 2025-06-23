@@ -19,6 +19,7 @@ export interface Segment {
     qualified?: boolean;
     region?: string;
     industry?: string;
+    title?: string;
   };
   color: string;
 }
