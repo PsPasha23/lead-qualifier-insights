@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { TrendingUp, Download, CheckCircle, XCircle, AlertCircle, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -83,6 +85,13 @@ const Reports = () => {
     { month: "May", rate: 62 },
     { month: "Jun", rate: 66 }
   ];
+
+  const chartConfig = {
+    rate: {
+      label: "Qualification Rate",
+      color: "hsl(217, 91%, 60%)",
+    },
+  };
 
   const handleQualifyLead = (leadId: number) => {
     toast({
@@ -197,22 +206,35 @@ const Reports = () => {
             <CardTitle className="text-lg">Performance Trend</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {heatmapData.slice(-3).map((data, index) => (
-                <div key={data.month} className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">{data.month}</span>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-20 bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: `${data.rate}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium w-10">{data.rate}%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ChartContainer config={chartConfig} className="h-[180px] w-full">
+              <LineChart data={heatmapData}>
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  domain={[50, 70]}
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(value) => `${value}%`}
+                />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />} 
+                  formatter={(value) => [`${value}%`, "Qualification Rate"]}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="rate" 
+                  stroke="var(--color-rate)" 
+                  strokeWidth={3}
+                  dot={{ fill: "var(--color-rate)", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: "var(--color-rate)", strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
