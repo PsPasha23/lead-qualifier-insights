@@ -135,14 +135,14 @@ const SegmentManager = ({
                     value={newSegment.filters.emailType || ""}
                     onValueChange={(value) => setNewSegment(prev => ({
                       ...prev,
-                      filters: { ...prev.filters, emailType: value || undefined }
+                      filters: { ...prev.filters, emailType: value === "none" ? undefined : value }
                     }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select email type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="none">No Filter</SelectItem>
                       <SelectItem value="Business">Business</SelectItem>
                       <SelectItem value="Personal">Personal</SelectItem>
                       <SelectItem value="Abusive">Abusive</SelectItem>
@@ -156,14 +156,14 @@ const SegmentManager = ({
                     value={newSegment.filters.score || ""}
                     onValueChange={(value) => setNewSegment(prev => ({
                       ...prev,
-                      filters: { ...prev.filters, score: value || undefined }
+                      filters: { ...prev.filters, score: value === "none" ? undefined : value }
                     }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select score range" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Scores</SelectItem>
+                      <SelectItem value="none">No Filter</SelectItem>
                       <SelectItem value="High">High Score</SelectItem>
                       <SelectItem value="Medium">Medium Score</SelectItem>
                       <SelectItem value="Low">Low Score</SelectItem>

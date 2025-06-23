@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Info, Mail, Building, MapPin, User, Save } from "lucide-react";
+import { Info, Mail, Building, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CustomCriteriaConfig from "@/components/CustomCriteriaConfig";
 
 const Setup = () => {
   const { toast } = useToast();
@@ -22,12 +21,12 @@ const Setup = () => {
     abusive: "low"
   });
   const [customCriteria, setCustomCriteria] = useState({
-    industry: { enabled: true, importance: 75 },
-    companySize: { enabled: true, importance: 60 },
-    revenue: { enabled: false, importance: 50 },
-    country: { enabled: true, importance: 40 },
-    region: { enabled: false, importance: 30 },
-    role: { enabled: true, importance: 80 }
+    industry: { enabled: true, selectedValues: [] as string[] },
+    companySize: { enabled: true, selectedValues: [] as string[] },
+    revenue: { enabled: false, selectedValues: [] as string[] },
+    country: { enabled: true, selectedValues: [] as string[] },
+    region: { enabled: false, selectedValues: [] as string[] },
+    role: { enabled: true, selectedValues: [] as string[] }
   });
 
   const handleSave = () => {
@@ -168,162 +167,14 @@ const Setup = () => {
         <CardHeader>
           <CardTitle>Custom Qualification Criteria</CardTitle>
           <CardDescription>
-            Configure scoring weights for firmographic, geographic, and role-based filters
+            Select specific values for firmographic, geographic, and role-based filters
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-medium text-slate-900 mb-4 flex items-center">
-                  <Building className="h-4 w-4 mr-2" />
-                  Firmographic Filters
-                </h4>
-                <div className="space-y-4">
-                  {["industry", "companySize", "revenue"].map((key) => {
-                    const labels = {
-                      industry: "Industry",
-                      companySize: "Company Size",
-                      revenue: "Revenue Tier"
-                    };
-                    return (
-                      <div key={key} className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <Label className="font-medium">{labels[key as keyof typeof labels]}</Label>
-                          <Switch
-                            checked={customCriteria[key as keyof typeof customCriteria].enabled}
-                            onCheckedChange={(checked) =>
-                              setCustomCriteria(prev => ({
-                                ...prev,
-                                [key]: { ...prev[key as keyof typeof prev], enabled: checked }
-                              }))
-                            }
-                          />
-                        </div>
-                        {customCriteria[key as keyof typeof customCriteria].enabled && (
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>Importance</span>
-                              <span>{customCriteria[key as keyof typeof customCriteria].importance}%</span>
-                            </div>
-                            <Slider
-                              value={[customCriteria[key as keyof typeof customCriteria].importance]}
-                              onValueChange={(value) =>
-                                setCustomCriteria(prev => ({
-                                  ...prev,
-                                  [key]: { ...prev[key as keyof typeof prev], importance: value[0] }
-                                }))
-                              }
-                              max={100}
-                              step={5}
-                              className="w-full"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-medium text-slate-900 mb-4 flex items-center">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Geographic Filters
-                </h4>
-                <div className="space-y-4">
-                  {["country", "region"].map((key) => {
-                    const labels = {
-                      country: "Country",
-                      region: "Region/State"
-                    };
-                    return (
-                      <div key={key} className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <Label className="font-medium">{labels[key as keyof typeof labels]}</Label>
-                          <Switch
-                            checked={customCriteria[key as keyof typeof customCriteria].enabled}
-                            onCheckedChange={(checked) =>
-                              setCustomCriteria(prev => ({
-                                ...prev,
-                                [key]: { ...prev[key as keyof typeof prev], enabled: checked }
-                              }))
-                            }
-                          />
-                        </div>
-                        {customCriteria[key as keyof typeof customCriteria].enabled && (
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>Importance</span>
-                              <span>{customCriteria[key as keyof typeof customCriteria].importance}%</span>
-                            </div>
-                            <Slider
-                              value={[customCriteria[key as keyof typeof customCriteria].importance]}
-                              onValueChange={(value) =>
-                                setCustomCriteria(prev => ({
-                                  ...prev,
-                                  [key]: { ...prev[key as keyof typeof prev], importance: value[0] }
-                                }))
-                              }
-                              max={100}
-                              step={5}
-                              className="w-full"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-slate-900 mb-4 flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  Role/Title Filters
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium">Role/Title</Label>
-                    <Switch
-                      checked={customCriteria.role.enabled}
-                      onCheckedChange={(checked) =>
-                        setCustomCriteria(prev => ({
-                          ...prev,
-                          role: { ...prev.role, enabled: checked }
-                        }))
-                      }
-                    />
-                  </div>
-                  {customCriteria.role.enabled && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Importance</span>
-                        <span>{customCriteria.role.importance}%</span>
-                      </div>
-                      <Slider
-                        value={[customCriteria.role.importance]}
-                        onValueChange={(value) =>
-                          setCustomCriteria(prev => ({
-                            ...prev,
-                            role: { ...prev.role, importance: value[0] }
-                          }))
-                        }
-                        max={100}
-                        step={5}
-                        className="w-full"
-                      />
-                      <div className="text-sm text-slate-600 mt-2">
-                        Examples: C-Level, Manager, IC (Individual Contributor)
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+          <CustomCriteriaConfig 
+            customCriteria={customCriteria}
+            onUpdate={setCustomCriteria}
+          />
 
           <Separator className="my-6" />
 
