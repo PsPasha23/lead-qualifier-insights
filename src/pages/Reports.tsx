@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from "recharts";
 import { TrendingUp, Download, Calendar, Users, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SegmentManager, { Segment } from "@/components/SegmentManager";
@@ -184,6 +184,13 @@ const Reports = () => {
     },
   };
 
+  const getProgressBarColor = (currentRate: number, goal: number) => {
+    const percentage = (currentRate / goal) * 100;
+    if (percentage >= 100) return "bg-green-500";
+    if (percentage >= 80) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
   const getCellColor = (type: 'corporate' | 'personal' | 'lowQuality', percentage: number) => {
     if (type === 'corporate') {
       if (percentage >= 75) return 'bg-green-600 text-white';
@@ -326,7 +333,18 @@ const Reports = () => {
                 <span>Your Rate</span>
                 <span>{kpiData.qualificationRate}%</span>
               </div>
-              <Progress value={kpiData.qualificationRate} className="h-2" />
+              <div className="relative">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all ${getProgressBarColor(kpiData.qualificationRate, qualificationGoal)}`}
+                    style={{ width: `${Math.min((kpiData.qualificationRate / 100) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div className="flex justify-between text-sm text-slate-600">
+                <span>Goal</span>
+                <span>{qualificationGoal}%</span>
+              </div>
               <div className="flex justify-between text-sm text-slate-600">
                 <span>Industry Benchmark</span>
                 <span>{kpiData.industryBenchmark}%</span>
@@ -388,6 +406,13 @@ const Reports = () => {
                 <ChartTooltip 
                   content={<ChartTooltipContent />} 
                   formatter={(value) => [`${value}%`, "Qualification Rate"]}
+                />
+                <ReferenceLine 
+                  y={qualificationGoal} 
+                  stroke="#ef4444" 
+                  strokeDasharray="5 5" 
+                  strokeWidth={2}
+                  label={{ value: `Goal: ${qualificationGoal}%`, position: "topRight", fontSize: 12, fill: "#ef4444" }}
                 />
                 <Line 
                   type="monotone" 
