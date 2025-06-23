@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +51,7 @@ const LeadTable = ({ leads, activeSegment, segments, onQualifyLead }: LeadTableP
           if (segment.filters.score && lead.score !== segment.filters.score) return false;
           if (segment.filters.region && lead.region !== segment.filters.region) return false;
           if (segment.filters.industry && lead.industry !== segment.filters.industry) return false;
+          if (segment.filters.title && lead.title !== segment.filters.title) return false;
           if (segment.filters.qualified !== undefined && lead.qualified !== segment.filters.qualified) return false;
           return true;
         });

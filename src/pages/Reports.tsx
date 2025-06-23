@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,22 +15,10 @@ const Reports = () => {
   const [timeFilter, setTimeFilter] = useState("6months");
   const [segments, setSegments] = useState<Segment[]>([
     {
-      id: "business-high",
-      name: "High-Value Business",
-      filters: { emailType: "Business", score: "High" },
-      color: "#10b981"
-    },
-    {
       id: "personal-medium",
       name: "Personal Medium",
       filters: { emailType: "Personal", score: "Medium" },
       color: "#8b5cf6"
-    },
-    {
-      id: "abusive-all",
-      name: "Abusive Emails",
-      filters: { emailType: "Abusive" },
-      color: "#ef4444"
     }
   ]);
   const [activeSegment, setActiveSegment] = useState<string | null>(null);
@@ -137,49 +124,49 @@ const Reports = () => {
     { month: "Jun", rate: 66 }
   ];
 
-  // Email distribution data for the enhanced heatmap
+  // Enhanced email distribution data for the new heatmap format
   const emailDistributionData = [
     {
-      month: "Jan",
-      business: 450,
-      personal: 280,
-      abusive: 45,
-      total: 775
+      month: "Jan 2025",
+      corporate: { count: 1675, percentage: 68.2, target: "70-80%" },
+      personal: { count: 351, percentage: 14.3, target: "10-15%" },
+      lowQuality: { count: 430, percentage: 17.5, target: "<20%" },
+      total: 2456
     },
     {
-      month: "Feb",
-      business: 520,
-      personal: 310,
-      abusive: 38,
-      total: 868
+      month: "Feb 2025",
+      corporate: { count: 1912, percentage: 71.4, target: "70-80%" },
+      personal: { count: 343, percentage: 12.8, target: "10-15%" },
+      lowQuality: { count: 423, percentage: 15.8, target: "<20%" },
+      total: 2678
     },
     {
-      month: "Mar",
-      business: 480,
-      personal: 295,
-      abusive: 42,
-      total: 817
+      month: "Mar 2025",
+      corporate: { count: 1769, percentage: 69.8, target: "70-80%" },
+      personal: { count: 345, percentage: 13.6, target: "10-15%" },
+      lowQuality: { count: 421, percentage: 16.6, target: "<20%" },
+      total: 2535
     },
     {
-      month: "Apr",
-      business: 550,
-      personal: 320,
-      abusive: 35,
-      total: 905
+      month: "Apr 2025",
+      corporate: { count: 2011, percentage: 72.1, target: "70-80%" },
+      personal: { count: 332, percentage: 11.9, target: "10-15%" },
+      lowQuality: { count: 446, percentage: 16.0, target: "<20%" },
+      total: 2789
     },
     {
-      month: "May",
-      business: 495,
-      personal: 305,
-      abusive: 40,
-      total: 840
+      month: "May 2025",
+      corporate: { count: 2165, percentage: 73.8, target: "70-80%" },
+      personal: { count: 364, percentage: 12.4, target: "10-15%" },
+      lowQuality: { count: 405, percentage: 13.8, target: "<20%" },
+      total: 2934
     },
     {
-      month: "Jun",
-      business: 580,
-      personal: 340,
-      abusive: 32,
-      total: 952
+      month: "Jun 2025",
+      corporate: { count: 2349, percentage: 75.2, target: "70-80%" },
+      personal: { count: 350, percentage: 11.2, target: "10-15%" },
+      lowQuality: { count: 425, percentage: 13.6, target: "<20%" },
+      total: 3124
     }
   ];
 
@@ -187,25 +174,6 @@ const Reports = () => {
     rate: {
       label: "Qualification Rate",
       color: "hsl(217, 91%, 60%)",
-    },
-  };
-
-  const distributionChartConfig = {
-    business: {
-      label: "Business Emails",
-      color: "#3b82f6",
-    },
-    personal: {
-      label: "Personal Emails",
-      color: "#8b5cf6",
-    },
-    abusive: {
-      label: "Abusive Emails",
-      color: "#ef4444",
-    },
-    total: {
-      label: "Total Leads",
-      color: "#10b981",
     },
   };
 
@@ -240,6 +208,28 @@ const Reports = () => {
       title: "Segment Deleted",
       description: "The segment has been removed.",
     });
+  };
+
+  const getCellColor = (type: 'corporate' | 'personal' | 'lowQuality', percentage: number) => {
+    if (type === 'corporate') {
+      // Green scale for corporate emails (target: 70-80%)
+      if (percentage >= 75) return 'bg-green-600 text-white';
+      if (percentage >= 70) return 'bg-green-500 text-white';
+      if (percentage >= 65) return 'bg-green-400 text-black';
+      return 'bg-green-300 text-black';
+    } else if (type === 'personal') {
+      // Yellow scale for personal emails (target: 10-15%)
+      if (percentage >= 14) return 'bg-yellow-500 text-black';
+      if (percentage >= 12) return 'bg-yellow-400 text-black';
+      if (percentage >= 10) return 'bg-yellow-300 text-black';
+      return 'bg-yellow-200 text-black';
+    } else {
+      // Green for good performance on low-quality (target: <20%)
+      if (percentage <= 14) return 'bg-green-500 text-white';
+      if (percentage <= 16) return 'bg-green-400 text-black';
+      if (percentage <= 18) return 'bg-yellow-400 text-black';
+      return 'bg-yellow-500 text-black';
+    }
   };
 
   return (
@@ -356,208 +346,129 @@ const Reports = () => {
         </Card>
       </div>
 
-      {/* Email Distribution Heatmap */}
+      {/* Lead Quality Distribution Heatmap */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Calendar className="h-5 w-5 mr-2 text-blue-600" />
-            Email Distribution Heatmap
-          </CardTitle>
-          <CardDescription>
-            Visual representation of email types across months with color intensity indicating volume.
-            Business Rate = % of business emails, Personal Rate = % of personal emails in each month.
-          </CardDescription>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="flex items-center">
+                <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+                Lead Quality Distribution by Time Period
+              </CardTitle>
+              <CardDescription>
+                Track corporate vs personal vs low-quality lead percentages
+              </CardDescription>
+            </div>
+            <Button variant="outline" size="sm">
+              📅 Monthly View
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {/* Heatmap Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                {/* Header Row */}
-                <thead>
-                  <tr className="text-sm font-medium text-slate-600">
-                    <th className="text-left p-2 min-w-[80px]">Email Type</th>
-                    {emailDistributionData.map((data) => (
-                      <th key={data.month} className="text-center p-2 min-w-[80px]">{data.month}</th>
-                    ))}
-                    <th className="text-center p-2 min-w-[100px]">Avg Volume</th>
-                  </tr>
-                </thead>
-                <tbody className="space-y-2">
-                  {/* Business Row */}
-                  <tr>
-                    <td className="p-2 font-medium text-blue-700 bg-blue-50 rounded-l">Business</td>
-                    {emailDistributionData.map((monthData) => {
-                      const intensity = Math.min((monthData.business / 600) * 100, 100);
-                      return (
-                        <td key={`business-${monthData.month}`} className="p-2">
-                          <div 
-                            className="text-center py-2 px-1 rounded font-medium relative group cursor-pointer transition-all"
-                            style={{ 
-                              backgroundColor: `rgba(59, 130, 246, ${intensity / 100})`,
-                              color: intensity > 50 ? 'white' : '#1e293b'
-                            }}
-                          >
-                            {monthData.business}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                              Business: {monthData.business} ({((monthData.business / monthData.total) * 100).toFixed(1)}%)
-                            </div>
-                          </div>
-                        </td>
-                      );
-                    })}
-                    <td className="p-2 text-center font-medium text-slate-600">
-                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.business, 0) / emailDistributionData.length)}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left p-3 font-semibold text-slate-700 bg-slate-50 min-w-[140px]">LEAD CATEGORY</th>
+                  <th className="text-left p-3 font-semibold text-slate-700 bg-slate-50 min-w-[120px]">TARGET RANGE</th>
+                  {emailDistributionData.map((data) => (
+                    <th key={data.month} className="text-center p-3 font-semibold text-slate-700 bg-slate-50 min-w-[120px]">
+                      {data.month}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {/* Corporate Emails Row */}
+                <tr className="border-b border-slate-200">
+                  <td className="p-3 font-medium text-slate-900 bg-slate-50">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                      Corporate Emails
+                    </div>
+                  </td>
+                  <td className="p-3 text-slate-600 bg-slate-50">
+                    <div className="font-medium">70-80%</div>
+                    <div className="text-xs text-slate-500">benchmark</div>
+                  </td>
+                  {emailDistributionData.map((monthData) => (
+                    <td key={`corporate-${monthData.month}`} className="p-0">
+                      <div className={`p-3 text-center font-semibold transition-all hover:opacity-80 cursor-pointer ${getCellColor('corporate', monthData.corporate.percentage)}`}>
+                        <div className="text-lg">{monthData.corporate.percentage}%</div>
+                        <div className="text-sm opacity-90">{monthData.corporate.count.toLocaleString()}</div>
+                      </div>
                     </td>
-                  </tr>
+                  ))}
+                </tr>
 
-                  {/* Personal Row */}
-                  <tr>
-                    <td className="p-2 font-medium text-purple-700 bg-purple-50 rounded-l">Personal</td>
-                    {emailDistributionData.map((monthData) => {
-                      const intensity = Math.min((monthData.personal / 400) * 100, 100);
-                      return (
-                        <td key={`personal-${monthData.month}`} className="p-2">
-                          <div 
-                            className="text-center py-2 px-1 rounded font-medium relative group cursor-pointer transition-all"
-                            style={{ 
-                              backgroundColor: `rgba(139, 92, 246, ${intensity / 100})`,
-                              color: intensity > 50 ? 'white' : '#1e293b'
-                            }}
-                          >
-                            {monthData.personal}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                              Personal: {monthData.personal} ({((monthData.personal / monthData.total) * 100).toFixed(1)}%)
-                            </div>
-                          </div>
-                        </td>
-                      );
-                    })}
-                    <td className="p-2 text-center font-medium text-slate-600">
-                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.personal, 0) / emailDistributionData.length)}
+                {/* Personal Emails Row */}
+                <tr className="border-b border-slate-200">
+                  <td className="p-3 font-medium text-slate-900 bg-slate-50">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                      Personal Emails
+                    </div>
+                  </td>
+                  <td className="p-3 text-slate-600 bg-slate-50">
+                    <div className="font-medium">10-15%</div>
+                    <div className="text-xs text-slate-500">benchmark</div>
+                  </td>
+                  {emailDistributionData.map((monthData) => (
+                    <td key={`personal-${monthData.month}`} className="p-0">
+                      <div className={`p-3 text-center font-semibold transition-all hover:opacity-80 cursor-pointer ${getCellColor('personal', monthData.personal.percentage)}`}>
+                        <div className="text-lg">{monthData.personal.percentage}%</div>
+                        <div className="text-sm opacity-90">{monthData.personal.count.toLocaleString()}</div>
+                      </div>
                     </td>
-                  </tr>
+                  ))}
+                </tr>
 
-                  {/* Abusive Row */}
-                  <tr>
-                    <td className="p-2 font-medium text-red-700 bg-red-50 rounded-l">Abusive</td>
-                    {emailDistributionData.map((monthData) => {
-                      const intensity = Math.min((monthData.abusive / 50) * 100, 100);
-                      return (
-                        <td key={`abusive-${monthData.month}`} className="p-2">
-                          <div 
-                            className="text-center py-2 px-1 rounded font-medium relative group cursor-pointer transition-all"
-                            style={{ 
-                              backgroundColor: `rgba(239, 68, 68, ${intensity / 100})`,
-                              color: intensity > 50 ? 'white' : '#1e293b'
-                            }}
-                          >
-                            {monthData.abusive}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                              Abusive: {monthData.abusive} ({((monthData.abusive / monthData.total) * 100).toFixed(1)}%)
-                            </div>
-                          </div>
-                        </td>
-                      );
-                    })}
-                    <td className="p-2 text-center font-medium text-slate-600">
-                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.abusive, 0) / emailDistributionData.length)}
+                {/* Low-Quality/Fake Row */}
+                <tr className="border-b border-slate-200">
+                  <td className="p-3 font-medium text-slate-900 bg-slate-50">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                      Low-Quality/Fake
+                    </div>
+                  </td>
+                  <td className="p-3 text-slate-600 bg-slate-50">
+                    <div className="font-medium">&lt;20%</div>
+                    <div className="text-xs text-slate-500">benchmark</div>
+                  </td>
+                  {emailDistributionData.map((monthData) => (
+                    <td key={`lowquality-${monthData.month}`} className="p-0">
+                      <div className={`p-3 text-center font-semibold transition-all hover:opacity-80 cursor-pointer ${getCellColor('lowQuality', monthData.lowQuality.percentage)}`}>
+                        <div className="text-lg">{monthData.lowQuality.percentage}%</div>
+                        <div className="text-sm opacity-90">{monthData.lowQuality.count.toLocaleString()}</div>
+                      </div>
                     </td>
-                  </tr>
+                  ))}
+                </tr>
 
-                  {/* Total Row */}
-                  <tr className="border-t-2 border-slate-200">
-                    <td className="p-2 font-bold text-green-700 bg-green-50 rounded-l">Total</td>
-                    {emailDistributionData.map((monthData) => {
-                      const intensity = Math.min((monthData.total / 1000) * 100, 100);
-                      return (
-                        <td key={`total-${monthData.month}`} className="p-2">
-                          <div 
-                            className="text-center py-2 px-1 rounded font-bold relative group cursor-pointer transition-all"
-                            style={{ 
-                              backgroundColor: `rgba(16, 185, 129, ${intensity / 100})`,
-                              color: intensity > 50 ? 'white' : '#1e293b'
-                            }}
-                          >
-                            {monthData.total}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                              Total Leads: {monthData.total}
-                            </div>
-                          </div>
-                        </td>
-                      );
-                    })}
-                    <td className="p-2 text-center font-bold text-slate-600">
-                      {Math.round(emailDistributionData.reduce((sum, data) => sum + data.total, 0) / emailDistributionData.length)}
+                {/* Total Leads Row */}
+                <tr className="bg-blue-50 border-t-2 border-blue-200">
+                  <td className="p-3 font-bold text-blue-900">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 rounded-full bg-blue-600 mr-2"></div>
+                      TOTAL LEADS
+                    </div>
+                  </td>
+                  <td className="p-3 text-blue-700">
+                    <div className="font-medium">All</div>
+                    <div className="text-xs">Categories</div>
+                    <div className="text-xs">combined</div>
+                  </td>
+                  {emailDistributionData.map((monthData) => (
+                    <td key={`total-${monthData.month}`} className="p-0">
+                      <div className="p-3 text-center font-bold bg-blue-100 text-blue-900 transition-all hover:bg-blue-200 cursor-pointer">
+                        <div className="text-lg">{(monthData.total / 1000).toFixed(1)}K</div>
+                        <div className="text-sm">leads</div>
+                      </div>
                     </td>
-                  </tr>
-
-                  {/* Percentage Breakdown Rows */}
-                  <tr className="border-t border-slate-100">
-                    <td className="p-2 text-sm font-medium text-slate-600 bg-slate-50 rounded-l">Business %</td>
-                    {emailDistributionData.map((monthData) => (
-                      <td key={`business-rate-${monthData.month}`} className="p-2 text-center text-sm font-medium text-slate-600">
-                        {((monthData.business / monthData.total) * 100).toFixed(1)}%
-                      </td>
-                    ))}
-                    <td className="p-2 text-center text-sm font-medium text-slate-600">
-                      {(emailDistributionData.reduce((sum, data) => sum + (data.business / data.total), 0) / emailDistributionData.length * 100).toFixed(1)}%
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="p-2 text-sm font-medium text-slate-600 bg-slate-50 rounded-l">Personal %</td>
-                    {emailDistributionData.map((monthData) => (
-                      <td key={`personal-rate-${monthData.month}`} className="p-2 text-center text-sm font-medium text-slate-600">
-                        {((monthData.personal / monthData.total) * 100).toFixed(1)}%
-                      </td>
-                    ))}
-                    <td className="p-2 text-center text-sm font-medium text-slate-600">
-                      {(emailDistributionData.reduce((sum, data) => sum + (data.personal / data.total), 0) / emailDistributionData.length * 100).toFixed(1)}%
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Heatmap Legend */}
-            <div className="mt-6 pt-4 border-t">
-              <div className="text-sm font-medium text-slate-700 mb-3">Color Intensity Legend</div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    <div className="w-4 h-4 bg-blue-200 rounded"></div>
-                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                    <div className="w-4 h-4 bg-blue-700 rounded"></div>
-                  </div>
-                  <span className="text-slate-600">Business (Low → High)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    <div className="w-4 h-4 bg-purple-200 rounded"></div>
-                    <div className="w-4 h-4 bg-purple-500 rounded"></div>
-                    <div className="w-4 h-4 bg-purple-700 rounded"></div>
-                  </div>
-                  <span className="text-slate-600">Personal (Low → High)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    <div className="w-4 h-4 bg-red-200 rounded"></div>
-                    <div className="w-4 h-4 bg-red-500 rounded"></div>
-                    <div className="w-4 h-4 bg-red-700 rounded"></div>
-                  </div>
-                  <span className="text-slate-600">Abusive (Low → High)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    <div className="w-4 h-4 bg-green-200 rounded"></div>
-                    <div className="w-4 h-4 bg-green-500 rounded"></div>
-                    <div className="w-4 h-4 bg-green-700 rounded"></div>
-                  </div>
-                  <span className="text-slate-600">Total (Low → High)</span>
-                </div>
-              </div>
-            </div>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
           </div>
         </CardContent>
       </Card>

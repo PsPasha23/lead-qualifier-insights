@@ -18,6 +18,7 @@ export interface Segment {
     score?: string;
     region?: string;
     industry?: string;
+    title?: string;
     qualified?: boolean;
   };
   color: string;
@@ -46,6 +47,7 @@ const SegmentManager = ({
       score: "none" as string,
       region: "none" as string,
       industry: "none" as string,
+      title: "none" as string,
       qualified: "none" as string,
     },
     color: "#3b82f6"
@@ -77,6 +79,9 @@ const SegmentManager = ({
     if (newSegment.filters.industry !== "none") {
       cleanFilters.industry = newSegment.filters.industry;
     }
+    if (newSegment.filters.title !== "none") {
+      cleanFilters.title = newSegment.filters.title;
+    }
     if (newSegment.filters.qualified !== "none") {
       cleanFilters.qualified = newSegment.filters.qualified === "true";
     }
@@ -94,6 +99,7 @@ const SegmentManager = ({
         score: "none",
         region: "none",
         industry: "none",
+        title: "none",
         qualified: "none",
       }, 
       color: "#3b82f6" 
@@ -125,14 +131,14 @@ const SegmentManager = ({
                 Create Segment
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Create New Segment</DialogTitle>
                 <DialogDescription>
                   Define filters to create a custom lead segment
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-96 overflow-y-auto">
                 <div>
                   <Label htmlFor="segment-name">Segment Name</Label>
                   <Input
@@ -143,46 +149,140 @@ const SegmentManager = ({
                   />
                 </div>
                 
-                <div>
-                  <Label>Email Type Filter</Label>
-                  <Select
-                    value={newSegment.filters.emailType}
-                    onValueChange={(value) => setNewSegment(prev => ({
-                      ...prev,
-                      filters: { ...prev.filters, emailType: value }
-                    }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select email type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No Filter</SelectItem>
-                      <SelectItem value="Business">Business</SelectItem>
-                      <SelectItem value="Personal">Personal</SelectItem>
-                      <SelectItem value="Abusive">Abusive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Email Type Filter</Label>
+                    <Select
+                      value={newSegment.filters.emailType}
+                      onValueChange={(value) => setNewSegment(prev => ({
+                        ...prev,
+                        filters: { ...prev.filters, emailType: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select email type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Filter</SelectItem>
+                        <SelectItem value="Business">Business</SelectItem>
+                        <SelectItem value="Personal">Personal</SelectItem>
+                        <SelectItem value="Abusive">Abusive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div>
-                  <Label>Score Filter</Label>
-                  <Select
-                    value={newSegment.filters.score}
-                    onValueChange={(value) => setNewSegment(prev => ({
-                      ...prev,
-                      filters: { ...prev.filters, score: value }
-                    }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select score range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No Filter</SelectItem>
-                      <SelectItem value="High">High Score</SelectItem>
-                      <SelectItem value="Medium">Medium Score</SelectItem>
-                      <SelectItem value="Low">Low Score</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <Label>Score Filter</Label>
+                    <Select
+                      value={newSegment.filters.score}
+                      onValueChange={(value) => setNewSegment(prev => ({
+                        ...prev,
+                        filters: { ...prev.filters, score: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select score range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Filter</SelectItem>
+                        <SelectItem value="High">High Score</SelectItem>
+                        <SelectItem value="Medium">Medium Score</SelectItem>
+                        <SelectItem value="Low">Low Score</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Region Filter</Label>
+                    <Select
+                      value={newSegment.filters.region}
+                      onValueChange={(value) => setNewSegment(prev => ({
+                        ...prev,
+                        filters: { ...prev.filters, region: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select region" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Filter</SelectItem>
+                        <SelectItem value="North America">North America</SelectItem>
+                        <SelectItem value="Europe">Europe</SelectItem>
+                        <SelectItem value="Asia">Asia</SelectItem>
+                        <SelectItem value="Unknown">Unknown</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Industry Filter</Label>
+                    <Select
+                      value={newSegment.filters.industry}
+                      onValueChange={(value) => setNewSegment(prev => ({
+                        ...prev,
+                        filters: { ...prev.filters, industry: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select industry" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Filter</SelectItem>
+                        <SelectItem value="SaaS">SaaS</SelectItem>
+                        <SelectItem value="E-commerce">E-commerce</SelectItem>
+                        <SelectItem value="Tech">Tech</SelectItem>
+                        <SelectItem value="Finance">Finance</SelectItem>
+                        <SelectItem value="Healthcare">Healthcare</SelectItem>
+                        <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                        <SelectItem value="Unknown">Unknown</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Title Filter</Label>
+                    <Select
+                      value={newSegment.filters.title}
+                      onValueChange={(value) => setNewSegment(prev => ({
+                        ...prev,
+                        filters: { ...prev.filters, title: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select title" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Filter</SelectItem>
+                        <SelectItem value="CEO">CEO</SelectItem>
+                        <SelectItem value="CTO">CTO</SelectItem>
+                        <SelectItem value="VP Sales">VP Sales</SelectItem>
+                        <SelectItem value="Marketing Manager">Marketing Manager</SelectItem>
+                        <SelectItem value="Manager">Manager</SelectItem>
+                        <SelectItem value="Director">Director</SelectItem>
+                        <SelectItem value="Unknown">Unknown</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Qualification Status</Label>
+                    <Select
+                      value={newSegment.filters.qualified}
+                      onValueChange={(value) => setNewSegment(prev => ({
+                        ...prev,
+                        filters: { ...prev.filters, qualified: value }
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Filter</SelectItem>
+                        <SelectItem value="true">Qualified</SelectItem>
+                        <SelectItem value="false">Unqualified</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div>
