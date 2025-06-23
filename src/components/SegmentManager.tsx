@@ -41,7 +41,13 @@ const SegmentManager = ({
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newSegment, setNewSegment] = useState({
     name: "",
-    filters: {},
+    filters: {
+      emailType: undefined as string | undefined,
+      score: undefined as string | undefined,
+      region: undefined as string | undefined,
+      industry: undefined as string | undefined,
+      qualified: undefined as boolean | undefined,
+    },
     color: "#3b82f6"
   });
   const { toast } = useToast();
@@ -56,8 +62,28 @@ const SegmentManager = ({
       return;
     }
 
-    onSegmentCreate(newSegment);
-    setNewSegment({ name: "", filters: {}, color: "#3b82f6" });
+    // Filter out undefined values before creating the segment
+    const cleanFilters = Object.fromEntries(
+      Object.entries(newSegment.filters).filter(([_, value]) => value !== undefined)
+    );
+
+    onSegmentCreate({
+      name: newSegment.name,
+      filters: cleanFilters,
+      color: newSegment.color
+    });
+    
+    setNewSegment({ 
+      name: "", 
+      filters: {
+        emailType: undefined,
+        score: undefined,
+        region: undefined,
+        industry: undefined,
+        qualified: undefined,
+      }, 
+      color: "#3b82f6" 
+    });
     setIsCreateDialogOpen(false);
     toast({
       title: "Segment Created",
@@ -116,7 +142,7 @@ const SegmentManager = ({
                       <SelectValue placeholder="Select email type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
+                      <SelectItem value="all">All Types</SelectItem>
                       <SelectItem value="Business">Business</SelectItem>
                       <SelectItem value="Personal">Personal</SelectItem>
                       <SelectItem value="Abusive">Abusive</SelectItem>
@@ -137,7 +163,7 @@ const SegmentManager = ({
                       <SelectValue placeholder="Select score range" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Scores</SelectItem>
+                      <SelectItem value="all">All Scores</SelectItem>
                       <SelectItem value="High">High Score</SelectItem>
                       <SelectItem value="Medium">Medium Score</SelectItem>
                       <SelectItem value="Low">Low Score</SelectItem>
