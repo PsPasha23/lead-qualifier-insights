@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,9 +32,9 @@ type SortDirection = 'asc' | 'desc';
 
 const LeadTable = ({ leads, activeSegment, segments, onQualifyLead }: LeadTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [scoreFilter, setScoreFilter] = useState("");
-  const [qualifiedFilter, setQualifiedFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [scoreFilter, setScoreFilter] = useState("all");
+  const [qualifiedFilter, setQualifiedFilter] = useState("all");
   const [sortField, setSortField] = useState<SortField>('email');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
@@ -68,17 +67,17 @@ const LeadTable = ({ leads, activeSegment, segments, onQualifyLead }: LeadTableP
     }
 
     // Apply type filter
-    if (typeFilter) {
+    if (typeFilter && typeFilter !== "all") {
       filtered = filtered.filter(lead => lead.type === typeFilter);
     }
 
     // Apply score filter
-    if (scoreFilter) {
+    if (scoreFilter && scoreFilter !== "all") {
       filtered = filtered.filter(lead => lead.score === scoreFilter);
     }
 
     // Apply qualified filter
-    if (qualifiedFilter) {
+    if (qualifiedFilter && qualifiedFilter !== "all") {
       const isQualified = qualifiedFilter === 'qualified';
       filtered = filtered.filter(lead => lead.qualified === isQualified);
     }
@@ -159,7 +158,7 @@ const LeadTable = ({ leads, activeSegment, segments, onQualifyLead }: LeadTableP
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="Business">Business</SelectItem>
               <SelectItem value="Personal">Personal</SelectItem>
               <SelectItem value="Abusive">Abusive</SelectItem>
@@ -171,7 +170,7 @@ const LeadTable = ({ leads, activeSegment, segments, onQualifyLead }: LeadTableP
               <SelectValue placeholder="All Scores" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Scores</SelectItem>
+              <SelectItem value="all">All Scores</SelectItem>
               <SelectItem value="High">High Score</SelectItem>
               <SelectItem value="Medium">Medium Score</SelectItem>
               <SelectItem value="Low">Low Score</SelectItem>
@@ -183,7 +182,7 @@ const LeadTable = ({ leads, activeSegment, segments, onQualifyLead }: LeadTableP
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="qualified">Qualified</SelectItem>
               <SelectItem value="unqualified">Unqualified</SelectItem>
             </SelectContent>

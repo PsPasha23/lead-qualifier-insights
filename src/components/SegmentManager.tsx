@@ -42,11 +42,11 @@ const SegmentManager = ({
   const [newSegment, setNewSegment] = useState({
     name: "",
     filters: {
-      emailType: undefined as string | undefined,
-      score: undefined as string | undefined,
-      region: undefined as string | undefined,
-      industry: undefined as string | undefined,
-      qualified: undefined as boolean | undefined,
+      emailType: "none" as string,
+      score: "none" as string,
+      region: "none" as string,
+      industry: "none" as string,
+      qualified: "none" as string,
     },
     color: "#3b82f6"
   });
@@ -62,10 +62,24 @@ const SegmentManager = ({
       return;
     }
 
-    // Filter out undefined values before creating the segment
-    const cleanFilters = Object.fromEntries(
-      Object.entries(newSegment.filters).filter(([_, value]) => value !== undefined)
-    );
+    // Filter out "none" values and convert qualified filter to boolean
+    const cleanFilters: any = {};
+    
+    if (newSegment.filters.emailType !== "none") {
+      cleanFilters.emailType = newSegment.filters.emailType;
+    }
+    if (newSegment.filters.score !== "none") {
+      cleanFilters.score = newSegment.filters.score;
+    }
+    if (newSegment.filters.region !== "none") {
+      cleanFilters.region = newSegment.filters.region;
+    }
+    if (newSegment.filters.industry !== "none") {
+      cleanFilters.industry = newSegment.filters.industry;
+    }
+    if (newSegment.filters.qualified !== "none") {
+      cleanFilters.qualified = newSegment.filters.qualified === "true";
+    }
 
     onSegmentCreate({
       name: newSegment.name,
@@ -76,11 +90,11 @@ const SegmentManager = ({
     setNewSegment({ 
       name: "", 
       filters: {
-        emailType: undefined,
-        score: undefined,
-        region: undefined,
-        industry: undefined,
-        qualified: undefined,
+        emailType: "none",
+        score: "none",
+        region: "none",
+        industry: "none",
+        qualified: "none",
       }, 
       color: "#3b82f6" 
     });
@@ -132,10 +146,10 @@ const SegmentManager = ({
                 <div>
                   <Label>Email Type Filter</Label>
                   <Select
-                    value={newSegment.filters.emailType || ""}
+                    value={newSegment.filters.emailType}
                     onValueChange={(value) => setNewSegment(prev => ({
                       ...prev,
-                      filters: { ...prev.filters, emailType: value === "none" ? undefined : value }
+                      filters: { ...prev.filters, emailType: value }
                     }))}
                   >
                     <SelectTrigger>
@@ -153,10 +167,10 @@ const SegmentManager = ({
                 <div>
                   <Label>Score Filter</Label>
                   <Select
-                    value={newSegment.filters.score || ""}
+                    value={newSegment.filters.score}
                     onValueChange={(value) => setNewSegment(prev => ({
                       ...prev,
-                      filters: { ...prev.filters, score: value === "none" ? undefined : value }
+                      filters: { ...prev.filters, score: value }
                     }))}
                   >
                     <SelectTrigger>
