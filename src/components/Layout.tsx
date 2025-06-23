@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Settings, BarChart3, Home, Menu, X } from "lucide-react";
+import { BarChart3, Home, Menu, X } from "lucide-react";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -11,7 +10,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: Home },
-    { path: "/setup", label: "Setup", icon: Settings },
     { path: "/reports", label: "Reports", icon: BarChart3 },
   ];
 

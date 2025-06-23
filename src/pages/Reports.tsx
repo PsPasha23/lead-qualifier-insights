@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,18 +5,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { TrendingUp, Download, Calendar, Users } from "lucide-react";
+import { TrendingUp, Download, Calendar, Users, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SegmentManager, { Segment } from "@/components/SegmentManager";
 import LeadTable from "@/components/LeadTable";
 import LeadQualificationGoal from "@/components/LeadQualificationGoal";
 import PersonalEmailQualificationModal from "@/components/PersonalEmailQualificationModal";
+import SettingsModal from "@/components/SettingsModal";
 
 const Reports = () => {
   const { toast } = useToast();
   const [timeFilter, setTimeFilter] = useState("6months");
   const [qualificationGoal, setQualificationGoal] = useState(70);
   const [isPersonalEmailModalOpen, setIsPersonalEmailModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [segments, setSegments] = useState<Segment[]>([
     {
       id: "personal-medium",
@@ -269,6 +270,10 @@ const Reports = () => {
               <SelectItem value="12months">Last 12 months</SelectItem>
             </SelectContent>
           </Select>
+          <Button onClick={() => setIsSettingsModalOpen(true)} variant="outline">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
           <Button onClick={handleExport} variant="outline">
             <Download className="h-4 w-4 mr-2" />
             Export Report
@@ -544,6 +549,12 @@ const Reports = () => {
         onOpenChange={setIsPersonalEmailModalOpen}
         personalLeads={personalLeads}
         onQualifyLeads={handleQualifyPersonalLeads}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onOpenChange={setIsSettingsModalOpen}
       />
     </div>
   );
