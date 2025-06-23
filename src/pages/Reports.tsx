@@ -3,17 +3,38 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { TrendingUp, Download, CheckCircle, XCircle, AlertCircle, Calendar } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { TrendingUp, Download, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import SegmentManager, { Segment } from "@/components/SegmentManager";
+import LeadTable from "@/components/LeadTable";
 
 const Reports = () => {
   const { toast } = useToast();
   const [timeFilter, setTimeFilter] = useState("6months");
+  const [segments, setSegments] = useState<Segment[]>([
+    {
+      id: "business-high",
+      name: "High-Value Business",
+      filters: { emailType: "Business", score: "High" },
+      color: "#10b981"
+    },
+    {
+      id: "personal-medium",
+      name: "Personal Medium",
+      filters: { emailType: "Personal", score: "Medium" },
+      color: "#8b5cf6"
+    },
+    {
+      id: "abusive-all",
+      name: "Abusive Emails",
+      filters: { emailType: "Abusive" },
+      color: "#ef4444"
+    }
+  ]);
+  const [activeSegment, setActiveSegment] = useState<string | null>(null);
 
   // Mock data for demonstration
   const kpiData = {
@@ -74,6 +95,36 @@ const Reports = () => {
       region: "Asia",
       industry: "Finance",
       title: "Director"
+    },
+    {
+      id: 6,
+      email: "admin@company.com",
+      type: "Business",
+      score: "High",
+      qualified: true,
+      region: "North America",
+      industry: "Manufacturing",
+      title: "VP Sales"
+    },
+    {
+      id: 7,
+      email: "test@test.com",
+      type: "Abusive",
+      score: "Low",
+      qualified: false,
+      region: "Unknown",
+      industry: "Unknown",
+      title: "Unknown"
+    },
+    {
+      id: 8,
+      email: "jane.smith@outlook.com",
+      type: "Personal",
+      score: "Medium",
+      qualified: false,
+      region: "Europe",
+      industry: "Healthcare",
+      title: "Manager"
     }
   ];
 
@@ -86,10 +137,75 @@ const Reports = () => {
     { month: "Jun", rate: 66 }
   ];
 
+  // Email distribution data for the enhanced heatmap
+  const emailDistributionData = [
+    {
+      month: "Jan",
+      business: 450,
+      personal: 280,
+      abusive: 45,
+      total: 775
+    },
+    {
+      month: "Feb",
+      business: 520,
+      personal: 310,
+      abusive: 38,
+      total: 868
+    },
+    {
+      month: "Mar",
+      business: 480,
+      personal: 295,
+      abusive: 42,
+      total: 817
+    },
+    {
+      month: "Apr",
+      business: 550,
+      personal: 320,
+      abusive: 35,
+      total: 905
+    },
+    {
+      month: "May",
+      business: 495,
+      personal: 305,
+      abusive: 40,
+      total: 840
+    },
+    {
+      month: "Jun",
+      business: 580,
+      personal: 340,
+      abusive: 32,
+      total: 952
+    }
+  ];
+
   const chartConfig = {
     rate: {
       label: "Qualification Rate",
       color: "hsl(217, 91%, 60%)",
+    },
+  };
+
+  const distributionChartConfig = {
+    business: {
+      label: "Business Emails",
+      color: "#3b82f6",
+    },
+    personal: {
+      label: "Personal Emails",
+      color: "#8b5cf6",
+    },
+    abusive: {
+      label: "Abusive Emails",
+      color: "#ef4444",
+    },
+    total: {
+      label: "Total Leads",
+      color: "#10b981",
     },
   };
 
@@ -107,22 +223,23 @@ const Reports = () => {
     });
   };
 
-  const getScoreBadge = (score: string) => {
-    const colors = {
-      High: "bg-green-100 text-green-800",
-      Medium: "bg-yellow-100 text-yellow-800",
-      Low: "bg-red-100 text-red-800"
+  const handleSegmentCreate = (segmentData: Omit<Segment, 'id'>) => {
+    const newSegment: Segment = {
+      ...segmentData,
+      id: `segment-${Date.now()}`
     };
-    return <Badge className={colors[score as keyof typeof colors]}>{score}</Badge>;
+    setSegments(prev => [...prev, newSegment]);
   };
 
-  const getTypeBadge = (type: string) => {
-    const colors = {
-      Business: "bg-blue-100 text-blue-800",
-      Personal: "bg-purple-100 text-purple-800",
-      Abusive: "bg-red-100 text-red-800"
-    };
-    return <Badge variant="outline" className={colors[type as keyof typeof colors]}>{type}</Badge>;
+  const handleSegmentDelete = (segmentId: string) => {
+    setSegments(prev => prev.filter(s => s.id !== segmentId));
+    if (activeSegment === segmentId) {
+      setActiveSegment(null);
+    }
+    toast({
+      title: "Segment Deleted",
+      description: "The segment has been removed.",
+    });
   };
 
   return (
@@ -239,113 +356,70 @@ const Reports = () => {
         </Card>
       </div>
 
-      {/* Time-Based Heatmap */}
+      {/* Enhanced Email Distribution Heatmap */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <Calendar className="h-5 w-5 mr-2 text-blue-600" />
-            Qualification Trends Over Time
+            Email Distribution Trends
           </CardTitle>
           <CardDescription>
-            Monthly qualification rate heatmap for the selected period
+            Distribution of business emails, personal emails, abusive emails, and total leads over time
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-6 gap-2">
-            {heatmapData.map((data) => (
-              <div key={data.month} className="text-center">
-                <div className="text-sm font-medium text-slate-600 mb-2">{data.month}</div>
-                <div 
-                  className={`h-16 rounded-md flex items-center justify-center text-white font-bold ${
-                    data.rate >= 65 ? 'bg-green-500' :
-                    data.rate >= 55 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`}
-                >
-                  {data.rate}%
-                </div>
-              </div>
-            ))}
-          </div>
+          <ChartContainer config={distributionChartConfig} className="h-[300px] w-full">
+            <BarChart data={emailDistributionData}>
+              <XAxis 
+                dataKey="month" 
+                tick={{ fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis 
+                tick={{ fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="business" fill="var(--color-business)" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="personal" fill="var(--color-personal)" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="abusive" fill="var(--color-abusive)" radius={[2, 2, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
           <div className="flex items-center justify-center space-x-6 mt-4 text-sm text-slate-600">
             <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-blue-500 rounded" />
+              <span>Business Emails</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-purple-500 rounded" />
+              <span>Personal Emails</span>
+            </div>
+            <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-red-500 rounded" />
-              <span>Below 55%</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-yellow-500 rounded" />
-              <span>55-65%</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-500 rounded" />
-              <span>Above 65%</span>
+              <span>Abusive Emails</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Lead Breakdown Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lead Breakdown with Manual Override</CardTitle>
-          <CardDescription>
-            Detailed view of leads segmented by type, region, industry, and title
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Region</TableHead>
-                  <TableHead>Industry</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {leadBreakdown.map((lead) => (
-                  <TableRow key={lead.id}>
-                    <TableCell className="font-medium">{lead.email}</TableCell>
-                    <TableCell>{getTypeBadge(lead.type)}</TableCell>
-                    <TableCell>{getScoreBadge(lead.score)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        {lead.qualified ? (
-                          <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
-                        ) : (
-                          <XCircle className="h-4 w-4 text-red-600 mr-1" />
-                        )}
-                        <span className={lead.qualified ? "text-green-600" : "text-red-600"}>
-                          {lead.qualified ? "Qualified" : "Unqualified"}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{lead.region}</TableCell>
-                    <TableCell>{lead.industry}</TableCell>
-                    <TableCell>{lead.title}</TableCell>
-                    <TableCell>
-                      {!lead.qualified && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleQualifyLead(lead.id)}
-                          className="text-xs"
-                        >
-                          Mark as Qualified
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Segment Manager */}
+      <SegmentManager
+        segments={segments}
+        onSegmentCreate={handleSegmentCreate}
+        onSegmentDelete={handleSegmentDelete}
+        activeSegment={activeSegment}
+        onSegmentSelect={setActiveSegment}
+      />
+
+      {/* Enhanced Lead Table */}
+      <LeadTable
+        leads={leadBreakdown}
+        activeSegment={activeSegment}
+        segments={segments}
+        onQualifyLead={handleQualifyLead}
+      />
     </div>
   );
 };
