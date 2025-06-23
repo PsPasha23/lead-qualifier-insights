@@ -95,8 +95,7 @@ document.getElementById('signup-button').addEventListener('click', function(e) {
           </DialogDescription>
         </DialogHeader>
 
-        
-
+        <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="border-2 border-slate-200">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
