@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,11 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from "recharts";
-import { TrendingUp, TrendingDown, Download, Calendar, Users, Settings, Edit } from "lucide-react";
+import { TrendingUp, TrendingDown, Download, Calendar, Settings, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SegmentManager, { Segment } from "@/components/SegmentManager";
 import LeadTable from "@/components/LeadTable";
-import PersonalEmailQualificationModal from "@/components/PersonalEmailQualificationModal";
 import SettingsModal from "@/components/SettingsModal";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -20,11 +18,9 @@ const Reports = () => {
   const { toast } = useToast();
   const [timeFilter, setTimeFilter] = useState("6months");
   const [qualificationGoal, setQualificationGoal] = useState(70);
-  const [isPersonalEmailModalOpen, setIsPersonalEmailModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isGoalEditModalOpen, setIsGoalEditModalOpen] = useState(false);
   const [newGoal, setNewGoal] = useState(qualificationGoal);
-  const [personalEmailScoring, setPersonalEmailScoring] = useState("medium"); // This would come from settings
   const [segments, setSegments] = useState<Segment[]>([
     {
       id: "qualified",
@@ -235,14 +231,6 @@ const Reports = () => {
     });
   };
 
-  const handleQualifyPersonalLeads = (leadIds: number[]) => {
-    setLeadBreakdown(prev => 
-      prev.map(lead => 
-        leadIds.includes(lead.id) ? { ...lead, qualified: true } : lead
-      )
-    );
-  };
-
   const handleExport = () => {
     toast({
       title: "Export Started",
@@ -279,12 +267,6 @@ const Reports = () => {
       });
     }
   };
-
-  const personalLeads = leadBreakdown.filter(lead => 
-    lead.type === "Personal" && !lead.qualified
-  );
-
-  const shouldShowPersonalEmailReview = personalEmailScoring === "high" || personalEmailScoring === "medium";
 
   const getDeltaColor = () => {
     const delta = kpiData.qualificationRate - kpiData.lastMonthRate;
@@ -597,45 +579,12 @@ const Reports = () => {
         title="Lead Qualification Segments"
       />
 
-      {/* Personal Email Review Button - moved above table and conditional */}
-      {shouldShowPersonalEmailReview && personalLeads.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Users className="h-6 w-6 text-orange-600" />
-                <div>
-                  <h3 className="font-semibold text-orange-900">Personal Email Review Required</h3>
-                  <p className="text-sm text-orange-700">
-                    {personalLeads.length} personal email leads need qualification review
-                  </p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => setIsPersonalEmailModalOpen(true)}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                Review Personal Emails
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Enhanced Lead Table */}
       <LeadTable
         leads={leadBreakdown}
         activeSegment={activeSegment}
         segments={segments}
         onQualifyLead={handleQualifyLead}
-      />
-
-      {/* Personal Email Qualification Modal */}
-      <PersonalEmailQualificationModal
-        isOpen={isPersonalEmailModalOpen}
-        onOpenChange={setIsPersonalEmailModalOpen}
-        personalLeads={personalLeads}
-        onQualifyLeads={handleQualifyPersonalLeads}
       />
 
       {/* Settings Modal */}
