@@ -5,14 +5,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { TrendingUp, Download, Calendar } from "lucide-react";
+import { TrendingUp, Download, Calendar, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SegmentManager, { Segment } from "@/components/SegmentManager";
 import LeadTable from "@/components/LeadTable";
+import LeadQualificationGoal from "@/components/LeadQualificationGoal";
+import PersonalEmailQualificationModal from "@/components/PersonalEmailQualificationModal";
 
 const Reports = () => {
   const { toast } = useToast();
   const [timeFilter, setTimeFilter] = useState("6months");
+  const [qualificationGoal, setQualificationGoal] = useState(70);
+  const [isPersonalEmailModalOpen, setIsPersonalEmailModalOpen] = useState(false);
   const [segments, setSegments] = useState<Segment[]>([
     {
       id: "personal-medium",
@@ -32,7 +36,7 @@ const Reports = () => {
     industryPercentile: 78
   };
 
-  const leadBreakdown = [
+  const [leadBreakdown, setLeadBreakdown] = useState([
     {
       id: 1,
       email: "john.doe@acmecorp.com",
@@ -113,16 +117,7 @@ const Reports = () => {
       industry: "Healthcare",
       title: "Manager"
     }
-  ];
-
-  const heatmapData = [
-    { month: "Jan", rate: 58 },
-    { month: "Feb", rate: 61 },
-    { month: "Mar", rate: 59 },
-    { month: "Apr", rate: 64 },
-    { month: "May", rate: 62 },
-    { month: "Jun", rate: 66 }
-  ];
+  ]);
 
   // Enhanced email distribution data for the new heatmap format
   const emailDistributionData = [
@@ -177,11 +172,43 @@ const Reports = () => {
     },
   };
 
+  const getCellColor = (type: 'corporate' | 'personal' | 'lowQuality', percentage: number) => {
+    if (type === 'corporate') {
+      if (percentage >= 75) return 'bg-green-600 text-white';
+      if (percentage >= 70) return 'bg-green-500 text-white';
+      if (percentage >= 65) return 'bg-green-400 text-black';
+      return 'bg-green-300 text-black';
+    } else if (type === 'personal') {
+      if (percentage >= 14) return 'bg-yellow-500 text-black';
+      if (percentage >= 12) return 'bg-yellow-400 text-black';
+      if (percentage >= 10) return 'bg-yellow-300 text-black';
+      return 'bg-yellow-200 text-black';
+    } else {
+      if (percentage <= 14) return 'bg-green-500 text-white';
+      if (percentage <= 16) return 'bg-green-400 text-black';
+      if (percentage <= 18) return 'bg-yellow-400 text-black';
+      return 'bg-yellow-500 text-black';
+    }
+  };
+
   const handleQualifyLead = (leadId: number) => {
+    setLeadBreakdown(prev => 
+      prev.map(lead => 
+        lead.id === leadId ? { ...lead, qualified: true } : lead
+      )
+    );
     toast({
       title: "Lead Qualified",
       description: "Lead has been manually marked as qualified.",
     });
+  };
+
+  const handleQualifyPersonalLeads = (leadIds: number[]) => {
+    setLeadBreakdown(prev => 
+      prev.map(lead => 
+        leadIds.includes(lead.id) ? { ...lead, qualified: true } : lead
+      )
+    );
   };
 
   const handleExport = () => {
@@ -210,27 +237,9 @@ const Reports = () => {
     });
   };
 
-  const getCellColor = (type: 'corporate' | 'personal' | 'lowQuality', percentage: number) => {
-    if (type === 'corporate') {
-      // Green scale for corporate emails (target: 70-80%)
-      if (percentage >= 75) return 'bg-green-600 text-white';
-      if (percentage >= 70) return 'bg-green-500 text-white';
-      if (percentage >= 65) return 'bg-green-400 text-black';
-      return 'bg-green-300 text-black';
-    } else if (type === 'personal') {
-      // Yellow scale for personal emails (target: 10-15%)
-      if (percentage >= 14) return 'bg-yellow-500 text-black';
-      if (percentage >= 12) return 'bg-yellow-400 text-black';
-      if (percentage >= 10) return 'bg-yellow-300 text-black';
-      return 'bg-yellow-200 text-black';
-    } else {
-      // Green for good performance on low-quality (target: <20%)
-      if (percentage <= 14) return 'bg-green-500 text-white';
-      if (percentage <= 16) return 'bg-green-400 text-black';
-      if (percentage <= 18) return 'bg-yellow-400 text-black';
-      return 'bg-yellow-500 text-black';
-    }
-  };
+  const personalLeads = leadBreakdown.filter(lead => 
+    lead.type === "Personal" && !lead.qualified
+  );
 
   return (
     <div className="space-y-6 px-4 sm:px-0">
@@ -255,6 +264,38 @@ const Reports = () => {
           </Button>
         </div>
       </div>
+
+      {/* Lead Qualification Goal Tracking */}
+      <LeadQualificationGoal
+        currentRate={kpiData.qualificationRate}
+        goal={qualificationGoal}
+        onGoalUpdate={setQualificationGoal}
+      />
+
+      {/* Personal Email Review Button */}
+      {personalLeads.length > 0 && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Users className="h-6 w-6 text-orange-600" />
+                <div>
+                  <h3 className="font-semibold text-orange-900">Personal Email Review Required</h3>
+                  <p className="text-sm text-orange-700">
+                    {personalLeads.length} personal email leads need qualification review
+                  </p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => setIsPersonalEmailModalOpen(true)}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                Review Personal Emails
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* KPI Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -379,7 +420,6 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* Corporate Emails Row */}
                 <tr className="border-b border-slate-200">
                   <td className="p-3 font-medium text-slate-900 bg-slate-50">
                     <div className="flex items-center">
@@ -401,7 +441,6 @@ const Reports = () => {
                   ))}
                 </tr>
 
-                {/* Personal Emails Row */}
                 <tr className="border-b border-slate-200">
                   <td className="p-3 font-medium text-slate-900 bg-slate-50">
                     <div className="flex items-center">
@@ -423,7 +462,6 @@ const Reports = () => {
                   ))}
                 </tr>
 
-                {/* Low-Quality/Fake Row */}
                 <tr className="border-b border-slate-200">
                   <td className="p-3 font-medium text-slate-900 bg-slate-50">
                     <div className="flex items-center">
@@ -445,7 +483,6 @@ const Reports = () => {
                   ))}
                 </tr>
 
-                {/* Total Leads Row */}
                 <tr className="bg-blue-50 border-t-2 border-blue-200">
                   <td className="p-3 font-bold text-blue-900">
                     <div className="flex items-center">
@@ -488,6 +525,14 @@ const Reports = () => {
         activeSegment={activeSegment}
         segments={segments}
         onQualifyLead={handleQualifyLead}
+      />
+
+      {/* Personal Email Qualification Modal */}
+      <PersonalEmailQualificationModal
+        isOpen={isPersonalEmailModalOpen}
+        onOpenChange={setIsPersonalEmailModalOpen}
+        personalLeads={personalLeads}
+        onQualifyLeads={handleQualifyPersonalLeads}
       />
     </div>
   );
