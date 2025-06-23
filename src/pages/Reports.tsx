@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ const Reports = () => {
   const { toast } = useToast();
   const [timeFilter, setTimeFilter] = useState("6months");
   const [qualificationGoal, setQualificationGoal] = useState(70);
+  const [lowQualityGoal, setLowQualityGoal] = useState(15); // Goal to keep low-quality rate below this %
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isGoalEditModalOpen, setIsGoalEditModalOpen] = useState(false);
   const [newGoal, setNewGoal] = useState(qualificationGoal);
@@ -44,7 +46,9 @@ const Reports = () => {
     industryBenchmark: 55,
     totalLeads: 2847,
     qualifiedLeads: 1765,
-    industryPercentile: 78
+    lowQualityRate: 17.5, // Current low-quality rate
+    lastMonthLowQualityRate: 19.2, // Last month's low-quality rate
+    industryLowQualityBenchmark: 20.3 // Industry benchmark for low-quality rate
   };
 
   // Data for the qualification rate trend chart
@@ -278,6 +282,16 @@ const Reports = () => {
     return delta >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />;
   };
 
+  const getLowQualityDeltaColor = () => {
+    const delta = kpiData.lowQualityRate - kpiData.lastMonthLowQualityRate;
+    return delta <= 0 ? "text-green-600" : "text-red-600"; // Lower is better for low-quality rate
+  };
+
+  const getLowQualityDeltaIcon = () => {
+    const delta = kpiData.lowQualityRate - kpiData.lastMonthLowQualityRate;
+    return delta <= 0 ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />;
+  };
+
   return (
     <div className="space-y-6 px-4 sm:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -357,34 +371,51 @@ const Reports = () => {
                 <span>{kpiData.industryBenchmark}%</span>
               </div>
             </div>
-            <div className="mt-4 p-3 bg-green-50 rounded-md">
-              <div className="flex items-center text-green-800">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                <span className="text-sm font-medium">
-                  You are in the top {100 - kpiData.industryPercentile}% of companies
-                </span>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Lead Volume</CardTitle>
+            <CardTitle className="text-lg">Low-Quality Lead Rate</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Total Leads</span>
-                <span className="text-2xl font-bold">{kpiData.totalLeads.toLocaleString()}</span>
+            <div className={`text-3xl font-bold mb-2 ${kpiData.lowQualityRate > lowQualityGoal ? 'text-red-600' : 'text-green-600'}`}>
+              {kpiData.lowQualityRate}%
+            </div>
+            <div className={`flex items-center space-x-1 text-sm ${getLowQualityDeltaColor()}`}>
+              {getLowQualityDeltaIcon()}
+              <span>
+                {Math.abs(kpiData.lowQualityRate - kpiData.lastMonthLowQualityRate)}% vs last month
+              </span>
+            </div>
+            <div className="space-y-2 mt-4">
+              <div className="flex justify-between text-sm">
+                <span>Your Rate</span>
+                <span>{kpiData.lowQualityRate}%</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Qualified</span>
-                <span className="text-xl font-semibold text-green-600">{kpiData.qualifiedLeads.toLocaleString()}</span>
+              <div className="relative">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all ${kpiData.lowQualityRate <= lowQualityGoal ? 'bg-green-500' : 'bg-red-500'}`}
+                    style={{ width: `${Math.min((kpiData.lowQualityRate / 30) * 100, 100)}%` }}
+                  ></div>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Unqualified</span>
-                <span className="text-xl font-semibold text-red-600">{(kpiData.totalLeads - kpiData.qualifiedLeads).toLocaleString()}</span>
+              <div className="flex justify-between text-sm text-slate-600">
+                <span>Goal (Max)</span>
+                <span>&lt;{lowQualityGoal}%</span>
+              </div>
+              <div className="flex justify-between text-sm text-slate-600">
+                <span>Industry Benchmark</span>
+                <span>{kpiData.industryLowQualityBenchmark}%</span>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-green-50 rounded-md">
+              <div className="flex items-center text-green-800">
+                <TrendingDown className="h-4 w-4 mr-2" />
+                <span className="text-sm font-medium">
+                  {kpiData.lowQualityRate < kpiData.industryLowQualityBenchmark ? 'Below' : 'Above'} industry average
+                </span>
               </div>
             </div>
           </CardContent>
