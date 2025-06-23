@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,13 +6,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from "recharts";
-import { TrendingUp, Download, Calendar, Users, Settings } from "lucide-react";
+import { TrendingUp, TrendingDown, Download, Calendar, Users, Settings, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SegmentManager, { Segment } from "@/components/SegmentManager";
 import LeadTable from "@/components/LeadTable";
-import LeadQualificationGoal from "@/components/LeadQualificationGoal";
 import PersonalEmailQualificationModal from "@/components/PersonalEmailQualificationModal";
 import SettingsModal from "@/components/SettingsModal";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Reports = () => {
   const { toast } = useToast();
@@ -19,12 +22,21 @@ const Reports = () => {
   const [qualificationGoal, setQualificationGoal] = useState(70);
   const [isPersonalEmailModalOpen, setIsPersonalEmailModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isGoalEditModalOpen, setIsGoalEditModalOpen] = useState(false);
+  const [newGoal, setNewGoal] = useState(qualificationGoal);
+  const [personalEmailScoring, setPersonalEmailScoring] = useState("medium"); // This would come from settings
   const [segments, setSegments] = useState<Segment[]>([
     {
-      id: "personal-medium",
-      name: "Personal Medium",
-      filters: { emailType: "Personal", score: "Medium" },
-      color: "#8b5cf6"
+      id: "qualified",
+      name: "Qualified",
+      filters: { qualified: true },
+      color: "#10b981"
+    },
+    {
+      id: "unqualified", 
+      name: "Unqualified",
+      filters: { qualified: false },
+      color: "#ef4444"
     }
   ]);
   const [activeSegment, setActiveSegment] = useState<string | null>(null);
@@ -32,6 +44,7 @@ const Reports = () => {
   // Mock data for demonstration
   const kpiData = {
     qualificationRate: 62,
+    lastMonthRate: 58,
     industryBenchmark: 55,
     totalLeads: 2847,
     qualifiedLeads: 1765,
@@ -256,9 +269,32 @@ const Reports = () => {
     });
   };
 
+  const handleGoalUpdate = () => {
+    if (newGoal > 0 && newGoal <= 100) {
+      setQualificationGoal(newGoal);
+      setIsGoalEditModalOpen(false);
+      toast({
+        title: "Goal Updated",
+        description: `Lead qualification goal updated to ${newGoal}%`,
+      });
+    }
+  };
+
   const personalLeads = leadBreakdown.filter(lead => 
     lead.type === "Personal" && !lead.qualified
   );
+
+  const shouldShowPersonalEmailReview = personalEmailScoring === "high" || personalEmailScoring === "medium";
+
+  const getDeltaColor = () => {
+    const delta = kpiData.qualificationRate - kpiData.lastMonthRate;
+    return delta >= 0 ? "text-green-600" : "text-red-600";
+  };
+
+  const getDeltaIcon = () => {
+    const delta = kpiData.qualificationRate - kpiData.lastMonthRate;
+    return delta >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />;
+  };
 
   return (
     <div className="space-y-6 px-4 sm:px-0">
@@ -288,47 +324,36 @@ const Reports = () => {
         </div>
       </div>
 
-      {/* Lead Qualification Goal Tracking */}
-      <LeadQualificationGoal
-        currentRate={kpiData.qualificationRate}
-        goal={qualificationGoal}
-        onGoalUpdate={setQualificationGoal}
-      />
-
-      {/* Personal Email Review Button */}
-      {personalLeads.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Users className="h-6 w-6 text-orange-600" />
-                <div>
-                  <h3 className="font-semibold text-orange-900">Personal Email Review Required</h3>
-                  <p className="text-sm text-orange-700">
-                    {personalLeads.length} personal email leads need qualification review
-                  </p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => setIsPersonalEmailModalOpen(true)}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                Review Personal Emails
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* KPI Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Lead Qualification Rate</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Lead Qualification Rate</CardTitle>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-slate-600">Goal: {qualificationGoal}%</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setIsGoalEditModalOpen(true)}
+                  className="p-1 h-6 w-6"
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600 mb-2">{kpiData.qualificationRate}%</div>
-            <div className="space-y-2">
+            <div className={`text-3xl font-bold mb-2 ${kpiData.qualificationRate < qualificationGoal ? 'text-red-600' : 'text-green-600'}`}>
+              {kpiData.qualificationRate}%
+            </div>
+            <div className={`flex items-center space-x-1 text-sm ${getDeltaColor()}`}>
+              {getDeltaIcon()}
+              <span>
+                {Math.abs(kpiData.qualificationRate - kpiData.lastMonthRate)}% vs last month
+              </span>
+            </div>
+            <div className="space-y-2 mt-4">
               <div className="flex justify-between text-sm">
                 <span>Your Rate</span>
                 <span>{kpiData.qualificationRate}%</span>
@@ -412,8 +437,19 @@ const Reports = () => {
                   stroke="#ef4444" 
                   strokeDasharray="5 5" 
                   strokeWidth={2}
-                  label={{ value: `Goal: ${qualificationGoal}%`, position: "top", fontSize: 12, fill: "#ef4444" }}
-                />
+                >
+                  <text
+                    x="50%"
+                    y={qualificationGoal}
+                    textAnchor="middle"
+                    fontSize={12}
+                    fill="#ef4444"
+                    style={{ opacity: 0 }}
+                    className="hover:opacity-100 transition-opacity"
+                  >
+                    Goal: {qualificationGoal}%
+                  </text>
+                </ReferenceLine>
                 <Line 
                   type="monotone" 
                   dataKey="rate" 
@@ -551,14 +587,40 @@ const Reports = () => {
         </CardContent>
       </Card>
 
-      {/* Segment Manager */}
+      {/* Lead Qualification Segments */}
       <SegmentManager
         segments={segments}
         onSegmentCreate={handleSegmentCreate}
         onSegmentDelete={handleSegmentDelete}
         activeSegment={activeSegment}
         onSegmentSelect={setActiveSegment}
+        title="Lead Qualification Segments"
       />
+
+      {/* Personal Email Review Button - moved above table and conditional */}
+      {shouldShowPersonalEmailReview && personalLeads.length > 0 && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Users className="h-6 w-6 text-orange-600" />
+                <div>
+                  <h3 className="font-semibold text-orange-900">Personal Email Review Required</h3>
+                  <p className="text-sm text-orange-700">
+                    {personalLeads.length} personal email leads need qualification review
+                  </p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => setIsPersonalEmailModalOpen(true)}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                Review Personal Emails
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Enhanced Lead Table */}
       <LeadTable
@@ -581,6 +643,40 @@ const Reports = () => {
         isOpen={isSettingsModalOpen}
         onOpenChange={setIsSettingsModalOpen}
       />
+
+      {/* Goal Edit Modal */}
+      <Dialog open={isGoalEditModalOpen} onOpenChange={setIsGoalEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Qualification Goal</DialogTitle>
+            <DialogDescription>
+              Set your target lead qualification rate
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="goal">Goal Percentage (%)</Label>
+              <Input
+                id="goal"
+                type="number"
+                value={newGoal}
+                onChange={(e) => setNewGoal(Number(e.target.value))}
+                min="1"
+                max="100"
+                placeholder="Enter goal percentage"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsGoalEditModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleGoalUpdate}>
+                Update Goal
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
