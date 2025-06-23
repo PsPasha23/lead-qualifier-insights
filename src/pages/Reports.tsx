@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,16 @@ const Reports = () => {
     qualifiedLeads: 1765,
     industryPercentile: 78
   };
+
+  // Data for the qualification rate trend chart
+  const qualificationTrendData = [
+    { month: "Jan", rate: 58 },
+    { month: "Feb", rate: 61 },
+    { month: "Mar", rate: 59 },
+    { month: "Apr", rate: 63 },
+    { month: "May", rate: 65 },
+    { month: "Jun", rate: 62 }
+  ];
 
   const [leadBreakdown, setLeadBreakdown] = useState([
     {
@@ -355,7 +366,7 @@ const Reports = () => {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[180px] w-full">
-              <LineChart data={heatmapData}>
+              <LineChart data={qualificationTrendData}>
                 <XAxis 
                   dataKey="month" 
                   tick={{ fontSize: 12 }}
