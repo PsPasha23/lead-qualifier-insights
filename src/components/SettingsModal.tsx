@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -28,9 +27,13 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
     personal: "low",
     abusive: "low"
   });
-  const [firmographyFilters, setFirmographyFilters] = useState({
-    userRegion: [] as string[],
-    companySize: [] as string[]
+  const [fitCriteria, setFitCriteria] = useState({
+    foundedYear: null as {
+      operator: string;
+      minYear: string;
+      maxYear: string;
+      importance: number[];
+    } | null
   });
   
   // Goals state
@@ -63,8 +66,8 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
     setEmailScoring(prev => ({ ...prev, [type]: value }));
   };
 
-  const handleFirmographyChange = (category: 'userRegion' | 'companySize', values: string[]) => {
-    setFirmographyFilters(prev => ({ ...prev, [category]: values }));
+  const handleFitCriteriaChange = (criteria: typeof fitCriteria) => {
+    setFitCriteria(criteria);
   };
 
   const handleNext = () => {
@@ -93,8 +96,8 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
           <ICPDefinitionStep
             emailScoring={emailScoring}
             onEmailScoringChange={handleEmailScoringChange}
-            firmographyFilters={firmographyFilters}
-            onFirmographyChange={handleFirmographyChange}
+            fitCriteria={fitCriteria}
+            onFitCriteriaChange={handleFitCriteriaChange}
           />
         );
       case 3:

@@ -4,7 +4,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Building, MapPin, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Mail, Target, X, Plus } from "lucide-react";
+import { useState } from "react";
 
 interface EmailScoring {
   business: string;
@@ -12,24 +15,30 @@ interface EmailScoring {
   abusive: string;
 }
 
-interface FirmographyFilters {
-  userRegion: string[];
-  companySize: string[];
+interface FitCriteria {
+  foundedYear: {
+    operator: string;
+    minYear: string;
+    maxYear: string;
+    importance: number[];
+  } | null;
 }
 
 interface ICPDefinitionStepProps {
   emailScoring: EmailScoring;
   onEmailScoringChange: (type: keyof EmailScoring, value: string) => void;
-  firmographyFilters: FirmographyFilters;
-  onFirmographyChange: (category: keyof FirmographyFilters, values: string[]) => void;
+  fitCriteria: FitCriteria;
+  onFitCriteriaChange: (criteria: FitCriteria) => void;
 }
 
 const ICPDefinitionStep = ({ 
   emailScoring, 
   onEmailScoringChange, 
-  firmographyFilters, 
-  onFirmographyChange 
+  fitCriteria, 
+  onFitCriteriaChange 
 }: ICPDefinitionStepProps) => {
+  const [showFoundedYear, setShowFoundedYear] = useState(!!fitCriteria.foundedYear);
+
   const getScoreBadge = (score: string) => {
     const colors = {
       high: "bg-green-100 text-green-800 border-green-200",
@@ -37,6 +46,42 @@ const ICPDefinitionStep = ({
       low: "bg-red-100 text-red-800 border-red-200"
     };
     return <Badge className={`${colors[score as keyof typeof colors]} border`}>{score.toUpperCase()}</Badge>;
+  };
+
+  const handleAddFoundedYear = () => {
+    setShowFoundedYear(true);
+    const newCriteria = {
+      ...fitCriteria,
+      foundedYear: {
+        operator: "is between",
+        minYear: "",
+        maxYear: "",
+        importance: [50]
+      }
+    };
+    onFitCriteriaChange(newCriteria);
+  };
+
+  const handleRemoveFoundedYear = () => {
+    setShowFoundedYear(false);
+    const newCriteria = {
+      ...fitCriteria,
+      foundedYear: null
+    };
+    onFitCriteriaChange(newCriteria);
+  };
+
+  const handleFoundedYearChange = (field: string, value: string | number[]) => {
+    if (fitCriteria.foundedYear) {
+      const newCriteria = {
+        ...fitCriteria,
+        foundedYear: {
+          ...fitCriteria.foundedYear,
+          [field]: value
+        }
+      };
+      onFitCriteriaChange(newCriteria);
+    }
   };
 
   return (
@@ -119,69 +164,110 @@ const ICPDefinitionStep = ({
 
       <Separator />
 
-      {/* Firmography Filters */}
+      {/* Fit Criteria */}
       <Card className="border border-gray-200">
         <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
           <CardTitle className="flex items-center text-purple-900 text-lg">
-            <Building className="h-5 w-5 mr-3 text-purple-600" />
-            Firmography Filters
+            <Target className="h-5 w-5 mr-3 text-purple-600" />
+            Fit Criteria
           </CardTitle>
           <CardDescription className="text-purple-700">
-            Add filters based on user and company characteristics
+            Add firmographic or demographic rules that define member fit criteria that you want to use in <span className="bg-yellow-200 px-1 rounded">scoring</span>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 p-6">
-          <div className="space-y-4">
-            <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <div className="space-y-1">
-                  <div className="font-semibold text-purple-900 flex items-center">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    User Region (user.firmography.region)
-                  </div>
-                  <p className="text-sm text-purple-700">Filter by user's geographic region</p>
-                </div>
-                <Button variant="outline" size="sm" className="border-purple-300 text-purple-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Region
-                </Button>
+          {/* Founded Year Criteria */}
+          {showFoundedYear && fitCriteria.foundedYear && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium text-gray-700">Founded year</div>
+                <div className="text-sm text-gray-500">Importance</div>
               </div>
-              {firmographyFilters.userRegion.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {firmographyFilters.userRegion.map((region) => (
-                    <Badge key={region} variant="outline" className="border-purple-300 text-purple-700">
-                      {region}
-                    </Badge>
-                  ))}
+              
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant="outline" 
+                  className="border-blue-300 text-blue-700 bg-blue-50 px-3 py-1"
+                >
+                  {fitCriteria.foundedYear.operator}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 ml-2 text-blue-700 hover:text-blue-900"
+                    onClick={handleRemoveFoundedYear}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+                
+                <div className="flex-1">
+                  <Slider
+                    value={fitCriteria.foundedYear.importance}
+                    onValueChange={(value) => handleFoundedYearChange('importance', value)}
+                    max={100}
+                    step={1}
+                    className="w-full"
+                  />
                 </div>
-              )}
-            </div>
+              </div>
 
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <div className="space-y-1">
-                  <div className="font-semibold text-blue-900 flex items-center">
-                    <Building className="h-4 w-4 mr-2" />
-                    Company Size (account.firmography.companySize)
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center gap-4">
+                  <Select 
+                    value={fitCriteria.foundedYear.operator} 
+                    onValueChange={(value) => handleFoundedYearChange('operator', value)}
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="is between">is between</SelectItem>
+                      <SelectItem value="is greater than">is greater than</SelectItem>
+                      <SelectItem value="is less than">is less than</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <div className="flex items-center gap-2">
+                    <Input
+                      placeholder="min year"
+                      value={fitCriteria.foundedYear.minYear}
+                      onChange={(e) => handleFoundedYearChange('minYear', e.target.value)}
+                      className="w-24"
+                    />
+                    <span className="text-gray-500">-</span>
+                    <Input
+                      placeholder="max year"
+                      value={fitCriteria.foundedYear.maxYear}
+                      onChange={(e) => handleFoundedYearChange('maxYear', e.target.value)}
+                      className="w-24"
+                    />
                   </div>
-                  <p className="text-sm text-blue-700">Filter by company employee count</p>
                 </div>
-                <Button variant="outline" size="sm" className="border-blue-300 text-blue-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Size
-                </Button>
+
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" size="sm" onClick={handleRemoveFoundedYear}>
+                    Cancel
+                  </Button>
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    Save
+                  </Button>
+                </div>
               </div>
-              {firmographyFilters.companySize.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {firmographyFilters.companySize.map((size) => (
-                    <Badge key={size} variant="outline" className="border-blue-300 text-blue-700">
-                      {size}
-                    </Badge>
-                  ))}
-                </div>
-              )}
             </div>
-          </div>
+          )}
+
+          {/* Add Criteria Button */}
+          {!showFoundedYear && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-purple-300 text-purple-700"
+              onClick={handleAddFoundedYear}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Founded Year
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>
