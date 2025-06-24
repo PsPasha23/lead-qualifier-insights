@@ -14,7 +14,7 @@ interface FilterData {
   type: 'select' | 'multiselect' | 'range' | 'text';
   options?: string[];
   value?: any;
-  importance: number[];
+  score: number[];
 }
 
 interface FilterConfigProps {
@@ -28,8 +28,8 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
     onFilterUpdate(filter.id, { value: newValue });
   };
 
-  const handleImportanceChange = (importance: number[]) => {
-    onFilterUpdate(filter.id, { importance });
+  const handleScoreChange = (score: number[]) => {
+    onFilterUpdate(filter.id, { score });
   };
 
   const renderValueInput = () => {
@@ -135,16 +135,17 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700">
-              Importance
+              Score
             </label>
             <span className="text-sm text-gray-500">
-              {filter.importance?.[0] || 50}%
+              {filter.score?.[0] || 5}/10
             </span>
           </div>
           <Slider
-            value={filter.importance || [50]}
-            onValueChange={handleImportanceChange}
-            max={100}
+            value={filter.score || [5]}
+            onValueChange={handleScoreChange}
+            max={10}
+            min={1}
             step={1}
             className="w-full"
           />

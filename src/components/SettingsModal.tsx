@@ -33,7 +33,7 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
       operator: string;
       minYear: string;
       maxYear: string;
-      importance: number[];
+      score: number[];
     } | null
   });
   
@@ -69,6 +69,25 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
     toast({
       title: "Lead Scoring Setup Complete",
       description: "Your lead qualification model has been configured successfully.",
+    });
+    onOpenChange(false);
+  };
+
+  const handleProceedWithDefaults = () => {
+    // Set default values for all steps
+    setSelectedSource("signup-data");
+    setIcpType("user");
+    setEmailScoring({
+      business: "high",
+      personal: "medium",
+      abusive: "low"
+    });
+    setLeadQualificationGoal("60");
+    setLowQualityLeadGoal("20");
+    
+    toast({
+      title: "Default Configuration Applied",
+      description: "Lead scoring has been set up with default values.",
     });
     onOpenChange(false);
   };
@@ -129,7 +148,7 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
         <div className="bg-white">
           {/* Header */}
           <div className="border-b border-gray-200 px-8 py-6">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-between mb-4">
               <Button
                 variant="ghost"
                 size="sm"
@@ -138,6 +157,13 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleProceedWithDefaults}
+                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+              >
+                Proceed with Defaults
               </Button>
             </div>
             <DialogTitle className="text-2xl font-semibold text-gray-900 mb-2">

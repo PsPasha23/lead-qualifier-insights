@@ -22,7 +22,7 @@ interface FilterData {
   type: 'select' | 'multiselect' | 'range' | 'text';
   options?: string[];
   value?: any;
-  importance: number[];
+  score: number[];
 }
 
 interface FitCriteria {
@@ -30,7 +30,7 @@ interface FitCriteria {
     operator: string;
     minYear: string;
     maxYear: string;
-    importance: number[];
+    score: number[];
   } | null;
 }
 
@@ -85,7 +85,7 @@ const EnhancedICPDefinitionStep = ({
     if (filterOption) {
       const newFilter: FilterData = {
         ...filterOption,
-        importance: [50]
+        score: [5]
       };
       setUserFilters([...userFilters, newFilter]);
     }
@@ -96,7 +96,7 @@ const EnhancedICPDefinitionStep = ({
     if (filterOption) {
       const newFilter: FilterData = {
         ...filterOption,
-        importance: [50]
+        score: [5]
       };
       setCompanyFilters([...companyFilters, newFilter]);
     }
@@ -163,7 +163,16 @@ const EnhancedICPDefinitionStep = ({
                     <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-sm font-semibold text-green-900">Corporate</div>
-                        {getScoreBadge("high")}
+                        <Select value={emailScoring.business} onValueChange={(value) => onEmailScoringChange('business', value)}>
+                          <SelectTrigger className="w-20 h-6 text-xs border-green-300">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white z-50">
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <p className="text-xs text-green-700">company.com, organization.org</p>
                     </div>
