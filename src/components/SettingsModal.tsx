@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Save, ChevronLeft, ChevronRight } from "lucide-react";
+import { Save, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LeadQualityExplanation from "@/components/LeadQualityExplanation";
 import SettingsStepper from "@/components/SettingsStepper";
@@ -113,54 +113,80 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Lead Scoring Setup</DialogTitle>
-          <DialogDescription>
-            Configure how leads are scored and qualified based on multiple parameters
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6">
-          {/* Lead Quality Explanation */}
-          <LeadQualityExplanation />
-
-          {/* Stepper */}
-          <SettingsStepper 
-            steps={steps} 
-            currentStep={currentStep} 
-            onStepClick={setCurrentStep} 
-          />
-
-          {/* Step Content */}
-          <div className="min-h-[400px]">
-            {renderStep()}
+      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto p-0">
+        <div className="bg-white">
+          {/* Header */}
+          <div className="border-b border-gray-200 px-8 py-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onOpenChange(false)}
+                className="text-gray-600 hover:text-gray-900 p-1 h-auto"
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back
+              </Button>
+            </div>
+            <DialogTitle className="text-2xl font-semibold text-gray-900 mb-2">
+              Create new score
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              Score helps you get the most leads by assigning fit, and/or behavioral criteria
+            </DialogDescription>
           </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center pt-6 border-t border-gray-200">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              className="flex items-center"
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Previous
-            </Button>
+          {/* Content */}
+          <div className="px-8 py-6 space-y-8">
+            {/* Lead Quality Explanation */}
+            <LeadQualityExplanation />
 
-            <div className="flex space-x-3">
-              {currentStep < steps.length ? (
-                <Button onClick={handleNext} className="flex items-center">
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-2" />
+            {/* Stepper */}
+            <div className="py-4">
+              <SettingsStepper 
+                steps={steps} 
+                currentStep={currentStep} 
+                onStepClick={setCurrentStep} 
+              />
+            </div>
+
+            {/* Step Content */}
+            <div className="min-h-[500px]">
+              {renderStep()}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-gray-200 px-8 py-6 bg-gray-50">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 1}
+                className="flex items-center"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Previous
+              </Button>
+
+              <div className="flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
                 </Button>
-              ) : (
-                <Button onClick={handleSave} className="flex items-center">
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Configuration
-                </Button>
-              )}
+                {currentStep < steps.length ? (
+                  <Button onClick={handleNext} className="flex items-center bg-blue-600 hover:bg-blue-700">
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-2" />
+                  </Button>
+                ) : (
+                  <Button onClick={handleSave} className="flex items-center bg-blue-600 hover:bg-blue-700">
+                    Save
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>

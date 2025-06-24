@@ -40,25 +40,31 @@ const DataSourcesStep = ({ selectedSources, onSourceToggle }: DataSourcesStepPro
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Select Your Data Sources</h3>
-        <p className="text-sm text-gray-600">Choose which data sources you want to include in your lead scoring.</p>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Select Your Data Sources</h3>
+        <p className="text-gray-600">Choose which data sources you want to include in your lead scoring.</p>
       </div>
 
       <div className="grid gap-4">
         {dataSources.map((source) => (
-          <Card key={source.id} className={`border-2 transition-all ${
-            selectedSources.includes(source.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
-          } ${!source.available ? "opacity-60" : ""}`}>
-            <CardHeader className="pb-3">
+          <Card 
+            key={source.id} 
+            className={`border-2 transition-all cursor-pointer ${
+              selectedSources.includes(source.id) 
+                ? "border-blue-500 bg-blue-50" 
+                : "border-gray-200 hover:border-gray-300"
+            } ${!source.available ? "opacity-60" : ""}`}
+            onClick={() => source.available && onSourceToggle(source.id)}
+          >
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg ${
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 rounded-lg ${
                     selectedSources.includes(source.id) ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-600"
                   }`}>
-                    <source.icon className="h-5 w-5" />
+                    <source.icon className="h-6 w-6" />
                   </div>
                   <div>
-                    <CardTitle className="text-base flex items-center gap-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
                       {source.title}
                       {source.defaultSelected && (
                         <Badge variant="outline" className="text-xs">Default</Badge>
@@ -67,7 +73,7 @@ const DataSourcesStep = ({ selectedSources, onSourceToggle }: DataSourcesStepPro
                         <Badge className="bg-orange-100 text-orange-800 text-xs">Coming Soon</Badge>
                       )}
                     </CardTitle>
-                    <CardDescription className="text-sm">{source.description}</CardDescription>
+                    <CardDescription className="text-gray-600 mt-1">{source.description}</CardDescription>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -77,14 +83,14 @@ const DataSourcesStep = ({ selectedSources, onSourceToggle }: DataSourcesStepPro
                       onCheckedChange={() => onSourceToggle(source.id)}
                     />
                   ) : (
-                    <div className="w-4 h-4 border-2 border-gray-300 rounded bg-gray-100" />
+                    <div className="w-5 h-5 border-2 border-gray-300 rounded bg-gray-100" />
                   )}
                 </div>
               </div>
             </CardHeader>
             {selectedSources.includes(source.id) && source.available && (
               <CardContent className="pt-0">
-                <div className="flex items-center text-sm text-green-600">
+                <div className="flex items-center text-sm text-green-600 bg-green-50 px-3 py-2 rounded-md">
                   <Check className="h-4 w-4 mr-2" />
                   Active data source
                 </div>

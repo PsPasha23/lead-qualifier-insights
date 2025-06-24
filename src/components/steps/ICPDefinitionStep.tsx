@@ -40,17 +40,17 @@ const ICPDefinitionStep = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Define Your Ideal Customer Profile</h3>
-        <p className="text-sm text-gray-600">Set scoring criteria and filters to identify your best leads.</p>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Define Your Ideal Customer Profile</h3>
+        <p className="text-gray-600">Set scoring criteria and filters to identify your best leads.</p>
       </div>
 
       {/* Email Type Scoring */}
-      <Card className="border-2 border-slate-200">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
-          <CardTitle className="flex items-center text-blue-900">
-            <Mail className="h-5 w-5 mr-2 text-blue-600" />
+      <Card className="border border-gray-200">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+          <CardTitle className="flex items-center text-blue-900 text-lg">
+            <Mail className="h-5 w-5 mr-3 text-blue-600" />
             Email Type Scoring
           </CardTitle>
           <CardDescription className="text-blue-700">
@@ -81,7 +81,7 @@ const ICPDefinitionStep = ({
               </div>
               <div className="flex items-center space-x-2">
                 <Select value={emailScoring.personal} onValueChange={(value) => onEmailScoringChange('personal', value)}>
-                  <SelectTrigger className="w-24 border-yellow-300">
+                  <SelectTrigger className="w-32 border-yellow-300">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -102,7 +102,7 @@ const ICPDefinitionStep = ({
               </div>
               <div className="flex items-center space-x-2">
                 <Select value={emailScoring.abusive} onValueChange={(value) => onEmailScoringChange('abusive', value)}>
-                  <SelectTrigger className="w-24 border-red-300">
+                  <SelectTrigger className="w-32 border-red-300">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -120,10 +120,10 @@ const ICPDefinitionStep = ({
       <Separator />
 
       {/* Firmography Filters */}
-      <Card className="border-2 border-slate-200">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-slate-200">
-          <CardTitle className="flex items-center text-purple-900">
-            <Building className="h-5 w-5 mr-2 text-purple-600" />
+      <Card className="border border-gray-200">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
+          <CardTitle className="flex items-center text-purple-900 text-lg">
+            <Building className="h-5 w-5 mr-3 text-purple-600" />
             Firmography Filters
           </CardTitle>
           <CardDescription className="text-purple-700">
