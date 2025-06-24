@@ -1,20 +1,28 @@
 
 import ICPEducationSection from "./ICPEducationSection";
 import ICPTypeSelector from "./ICPTypeSelector";
+import FilterSelector from "../FilterSelector";
+import FilterConfig from "../FilterConfig";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Mail, Target, X, Plus, Users, Building } from "lucide-react";
+import { Mail, Users, Building } from "lucide-react";
 import { useState } from "react";
 
 interface EmailScoring {
   business: string;
   personal: string;
   abusive: string;
+}
+
+interface FilterData {
+  id: string;
+  label: string;
+  type: 'select' | 'multiselect' | 'range' | 'text';
+  options?: string[];
+  value?: any;
+  importance: number[];
 }
 
 interface FitCriteria {
@@ -43,7 +51,25 @@ const EnhancedICPDefinitionStep = ({
   fitCriteria, 
   onFitCriteriaChange 
 }: EnhancedICPDefinitionStepProps) => {
-  const [showFoundedYear, setShowFoundedYear] = useState(!!fitCriteria.foundedYear);
+  const [userFilters, setUserFilters] = useState<FilterData[]>([]);
+  const [companyFilters, setCompanyFilters] = useState<FilterData[]>([]);
+
+  const userFilterOptions = [
+    { id: 'region', label: 'Region', type: 'multiselect' as const, options: ['North America', 'Europe', 'Asia Pacific', 'Latin America', 'Africa'] },
+    { id: 'role', label: 'Role/Title', type: 'multiselect' as const, options: ['CEO', 'CTO', 'VP', 'Director', 'Manager', 'Developer', 'Designer'] },
+    { id: 'employerSize', label: 'Employer Size', type: 'select' as const, options: ['1-10', '11-50', '51-200', '201-1000', '1000+'] },
+    { id: 'employerRevenue', label: 'Employer Revenue', type: 'range' as const },
+    { id: 'seniority', label: 'Seniority Level', type: 'select' as const, options: ['Entry', 'Mid', 'Senior', 'Executive'] }
+  ];
+
+  const companyFilterOptions = [
+    { id: 'industry', label: 'Industry', type: 'multiselect' as const, options: ['Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Manufacturing'] },
+    { id: 'companySize', label: 'Company Size', type: 'select' as const, options: ['1-10', '11-50', 'scaleup-200', '201-1000', '1000+'] },
+    { id: 'fundingStatus', label: 'Funding Status', type: 'multiselect' as const, options: ['Bootstrapped', 'Seed', 'Series A', 'Series B', 'Series C+', 'IPO'] },
+    { id: 'revenue', label: 'Revenue', type: 'range' as const },
+    { id: 'location', label: 'Location', type: 'multiselect' as const, options: ['North America', 'Europe', 'Asia Pacific', 'Latin America', 'Africa'] },
+    { id: 'techStack', label: 'Technology Stack', type: 'multiselect' as const, options: ['React', 'Node.js', 'Python', 'Java', 'AWS', 'Azure', 'GCP'] }
+  ];
 
   const getScoreBadge = (score: string) => {
     const colors = {
@@ -54,40 +80,46 @@ const EnhancedICPDefinitionStep = ({
     return <Badge className={`${colors[score as keyof typeof colors]} border`}>{score.toUpperCase()}</Badge>;
   };
 
-  const handleAddFoundedYear = () => {
-    setShowFoundedYear(true);
-    const newCriteria = {
-      ...fitCriteria,
-      foundedYear: {
-        operator: "is between",
-        minYear: "",
-        maxYear: "",
+  const handleAddUserFilter = (filterId: string) => {
+    const filterOption = userFilterOptions.find(f => f.id === filterId);
+    if (filterOption) {
+      const newFilter: FilterData = {
+        ...filterOption,
         importance: [50]
-      }
-    };
-    onFitCriteriaChange(newCriteria);
-  };
-
-  const handleRemoveFoundedYear = () => {
-    setShowFoundedYear(false);
-    const newCriteria = {
-      ...fitCriteria,
-      foundedYear: null
-    };
-    onFitCriteriaChange(newCriteria);
-  };
-
-  const handleFoundedYearChange = (field: string, value: string | number[]) => {
-    if (fitCriteria.foundedYear) {
-      const newCriteria = {
-        ...fitCriteria,
-        foundedYear: {
-          ...fitCriteria.foundedYear,
-          [field]: value
-        }
       };
-      onFitCriteriaChange(newCriteria);
+      setUserFilters([...userFilters, newFilter]);
     }
+  };
+
+  const handleAddCompanyFilter = (filterId: string) => {
+    const filterOption = companyFilterOptions.find(f => f.id === filterId);
+    if (filterOption) {
+      const newFilter: FilterData = {
+        ...filterOption,
+        importance: [50]
+      };
+      setCompanyFilters([...companyFilters, newFilter]);
+    }
+  };
+
+  const handleUpdateUserFilter = (filterId: string, updates: Partial<FilterData>) => {
+    setUserFilters(filters => 
+      filters.map(f => f.id === filterId ? { ...f, ...updates } : f)
+    );
+  };
+
+  const handleUpdateCompanyFilter = (filterId: string, updates: Partial<FilterData>) => {
+    setCompanyFilters(filters => 
+      filters.map(f => f.id === filterId ? { ...f, ...updates } : f)
+    );
+  };
+
+  const handleRemoveUserFilter = (filterId: string) => {
+    setUserFilters(filters => filters.filter(f => f.id !== filterId));
+  };
+
+  const handleRemoveCompanyFilter = (filterId: string) => {
+    setCompanyFilters(filters => filters.filter(f => f.id !== filterId));
   };
 
   return (
@@ -107,219 +139,144 @@ const EnhancedICPDefinitionStep = ({
           <Separator />
 
           {icpType === 'user' && (
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
-                <CardTitle className="flex items-center text-blue-900 text-lg">
-                  <Users className="h-5 w-5 mr-3 text-blue-600" />
-                  User-Based ICP Criteria
-                </CardTitle>
-                <CardDescription className="text-blue-700">
-                  Configure scoring based on individual user characteristics
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6 p-6">
-                {/* Email Type Scoring */}
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="flex items-center space-x-2">
+                  <Users className="h-5 w-5 text-blue-600" />
+                  <span className="text-lg font-semibold text-blue-900">User-Based ICP Criteria</span>
+                </div>
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                  Individual attributes
+                </Badge>
+              </div>
+
+              {/* Email Type Scoring */}
+              <Card className="border border-gray-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center text-base">
                     <Mail className="h-4 w-4 mr-2 text-blue-600" />
                     Email Type Scoring
-                  </h4>
-                  
-                  <div className="space-y-4">
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="space-y-1">
-                          <div className="font-semibold text-green-900">Corporate Email Domains</div>
-                          <p className="text-sm text-green-700">company.com, organization.org</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {getScoreBadge("high")}
-                        </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-semibold text-green-900">Corporate</div>
+                        {getScoreBadge("high")}
                       </div>
-                      <div className="text-xs text-green-600 font-medium">
-                        ✓ Automatically set to HIGH - Default
-                      </div>
+                      <p className="text-xs text-green-700">company.com, organization.org</p>
                     </div>
 
-                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="space-y-1">
-                          <div className="font-semibold text-yellow-900">Personal Email Domains</div>
-                          <p className="text-sm text-yellow-700">Gmail, Yahoo, Outlook, etc.</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Select value={emailScoring.personal} onValueChange={(value) => onEmailScoringChange('personal', value)}>
-                            <SelectTrigger className="w-32 border-yellow-300">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="high">High</SelectItem>
-                              <SelectItem value="medium">Medium</SelectItem>
-                              <SelectItem value="low">Low</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-semibold text-yellow-900">Personal</div>
+                        <Select value={emailScoring.personal} onValueChange={(value) => onEmailScoringChange('personal', value)}>
+                          <SelectTrigger className="w-20 h-6 text-xs border-yellow-300">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white z-50">
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                      <p className="text-xs text-yellow-700">Gmail, Yahoo, Outlook</p>
                     </div>
 
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="space-y-1">
-                          <div className="font-semibold text-red-900">Abusive/Invalid Domains</div>
-                          <p className="text-sm text-red-700">Disposable or flagged domains</p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Select value={emailScoring.abusive} onValueChange={(value) => onEmailScoringChange('abusive', value)}>
-                            <SelectTrigger className="w-32 border-red-300">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="high">High</SelectItem>
-                              <SelectItem value="medium">Medium</SelectItem>
-                              <SelectItem value="low">Low</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-semibold text-red-900">Abusive</div>
+                        <Select value={emailScoring.abusive} onValueChange={(value) => onEmailScoringChange('abusive', value)}>
+                          <SelectTrigger className="w-20 h-6 text-xs border-red-300">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white z-50">
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                      <p className="text-xs text-red-700">Disposable domains</p>
                     </div>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                {/* Additional User Criteria */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h5 className="font-medium text-gray-900 mb-2">Additional User Criteria</h5>
-                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                    <div>• Region (Coming Soon)</div>
-                    <div>• Role/Title (Coming Soon)</div>
-                    <div>• Employer Size (Coming Soon)</div>
-                    <div>• Employer Revenue (Coming Soon)</div>
+              {/* User Attribute Filters */}
+              <Card className="border border-gray-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Additional User Filters</CardTitle>
+                    <FilterSelector 
+                      availableFilters={userFilterOptions}
+                      onFilterAdd={handleAddUserFilter}
+                      usedFilters={userFilters.map(f => f.id)}
+                    />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {userFilters.map((filter) => (
+                    <FilterConfig
+                      key={filter.id}
+                      filter={filter}
+                      onFilterUpdate={handleUpdateUserFilter}
+                      onFilterRemove={handleRemoveUserFilter}
+                    />
+                  ))}
+                  {userFilters.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No additional filters added yet. Click "Add Filter" to get started.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {icpType === 'company' && (
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200">
-                <CardTitle className="flex items-center text-purple-900 text-lg">
-                  <Building className="h-5 w-5 mr-3 text-purple-600" />
-                  Company-Based ICP Criteria
-                </CardTitle>
-                <CardDescription className="text-purple-700">
-                  Configure scoring based on company firmographic data
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6 p-6">
-                {/* Founded Year Criteria */}
-                {showFoundedYear && fitCriteria.foundedYear && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium text-gray-700">Founded year</div>
-                      <div className="text-sm text-gray-500">Importance</div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Badge 
-                        variant="outline" 
-                        className="border-blue-300 text-blue-700 bg-blue-50 px-3 py-1"
-                      >
-                        {fitCriteria.foundedYear.operator}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 ml-2 text-blue-700 hover:text-blue-900"
-                          onClick={handleRemoveFoundedYear}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </Badge>
-                      
-                      <div className="flex-1">
-                        <Slider
-                          value={fitCriteria.foundedYear.importance}
-                          onValueChange={(value) => handleFoundedYearChange('importance', value)}
-                          max={100}
-                          step={1}
-                          className="w-full"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <Select 
-                          value={fitCriteria.foundedYear.operator} 
-                          onValueChange={(value) => handleFoundedYearChange('operator', value)}
-                        >
-                          <SelectTrigger className="w-40">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="is between">is between</SelectItem>
-                            <SelectItem value="is greater than">is greater than</SelectItem>
-                            <SelectItem value="is less than">is less than</SelectItem>
-                          </SelectContent>
-                        </Select>
-
-                        <div className="flex items-center gap-2">
-                          <Input
-                            placeholder="min year"
-                            value={fitCriteria.foundedYear.minYear}
-                            onChange={(e) => handleFoundedYearChange('minYear', e.target.value)}
-                            className="w-24"
-                          />
-                          <span className="text-gray-500">-</span>
-                          <Input
-                            placeholder="max year"
-                            value={fitCriteria.foundedYear.maxYear}
-                            onChange={(e) => handleFoundedYearChange('maxYear', e.target.value)}
-                            className="w-24"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" size="sm" onClick={handleRemoveFoundedYear}>
-                          Cancel
-                        </Button>
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                          Save
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Add Criteria Button */}
-                {!showFoundedYear && (
-                  <div className="space-y-4">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="border-purple-300 text-purple-700"
-                      onClick={handleAddFoundedYear}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Founded Year Criteria
-                    </Button>
-                  </div>
-                )}
-
-                {/* Additional Company Criteria */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h5 className="font-medium text-gray-900 mb-2">Additional Company Criteria</h5>
-                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                    <div>• Industry (Coming Soon)</div>
-                    <div>• Company Size (Coming Soon)</div>
-                    <div>• Funding Status (Coming Soon)</div>
-                    <div>• Revenue Bands (Coming Soon)</div>
-                    <div>• Location (Coming Soon)</div>
-                    <div>• Technology Stack (Coming Soon)</div>
-                  </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="flex items-center space-x-2">
+                  <Building className="h-5 w-5 text-purple-600" />
+                  <span className="text-lg font-semibold text-purple-900">Company-Based ICP Criteria</span>
                 </div>
-              </CardContent>
-            </Card>
+                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-300">
+                  Firmographic data
+                </Badge>
+              </div>
+
+              {/* Company Attribute Filters */}
+              <Card className="border border-gray-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Company Filters</CardTitle>
+                    <FilterSelector 
+                      availableFilters={companyFilterOptions}
+                      onFilterAdd={handleAddCompanyFilter}
+                      usedFilters={companyFilters.map(f => f.id)}
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {companyFilters.map((filter) => (
+                    <FilterConfig
+                      key={filter.id}
+                      filter={filter}
+                      onFilterUpdate={handleUpdateCompanyFilter}
+                      onFilterRemove={handleRemoveCompanyFilter}
+                    />
+                  ))}
+                  {companyFilters.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No filters added yet. Click "Add Filter" to get started.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           )}
         </>
       )}
