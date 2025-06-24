@@ -6,15 +6,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X } from "lucide-react";
+import { X, Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface FilterRule {
+  id: string;
+  value: any;
+  score: number[];
+  operator?: 'AND' | 'OR';
+}
 
 interface FilterData {
   id: string;
   label: string;
   type: 'select' | 'multiselect' | 'range' | 'text';
   options?: string[];
-  value?: any;
-  score: number[];
+  rules: FilterRule[];
 }
 
 interface FilterConfigProps {
@@ -24,19 +31,48 @@ interface FilterConfigProps {
 }
 
 const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigProps) => {
-  const handleValueChange = (newValue: any) => {
-    onFilterUpdate(filter.id, { value: newValue });
+  const handleRuleValueChange = (ruleId: string, newValue: any) => {
+    const updatedRules = filter.rules.map(rule => 
+      rule.id === ruleId ? { ...rule, value: newValue } : rule
+    );
+    onFilterUpdate(filter.id, { rules: updatedRules });
   };
 
-  const handleScoreChange = (score: number[]) => {
-    onFilterUpdate(filter.id, { score });
+  const handleRuleScoreChange = (ruleId: string, score: number[]) => {
+    const updatedRules = filter.rules.map(rule => 
+      rule.id === ruleId ? { ...rule, score } : rule
+    );
+    onFilterUpdate(filter.id, { rules: updatedRules });
   };
 
-  const renderValueInput = () => {
+  const handleRuleOperatorChange = (ruleId: string, operator: 'AND' | 'OR') => {
+    const updatedRules = filter.rules.map(rule => 
+      rule.id === ruleId ? { ...rule, operator } : rule
+    );
+    onFilterUpdate(filter.id, { rules: updatedRules });
+  };
+
+  const addNewRule = () => {
+    const newRule: FilterRule = {
+      id: `${filter.id}-rule-${Date.now()}`,
+      value: filter.type === 'multiselect' ? [] : filter.type === 'range' ? { min: '', max: '' } : '',
+      score: [5],
+      operator: 'OR'
+    };
+    const updatedRules = [...filter.rules, newRule];
+    onFilterUpdate(filter.id, { rules: updatedRules });
+  };
+
+  const removeRule = (ruleId: string) => {
+    const updatedRules = filter.rules.filter(rule => rule.id !== ruleId);
+    onFilterUpdate(filter.id, { rules: updatedRules });
+  };
+
+  const renderRuleValueInput = (rule: FilterRule) => {
     switch (filter.type) {
       case 'select':
         return (
-          <Select value={filter.value || ""} onValueChange={handleValueChange}>
+          <Select value={rule.value || ""} onValueChange={(value) => handleRuleValueChange(rule.id, value)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select value" />
             </SelectTrigger>
@@ -56,18 +92,18 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
             {filter.options?.map((option) => (
               <div key={option} className="flex items-center space-x-2">
                 <Checkbox
-                  id={`${filter.id}-${option}`}
-                  checked={filter.value?.includes(option) || false}
+                  id={`${rule.id}-${option}`}
+                  checked={rule.value?.includes(option) || false}
                   onCheckedChange={(checked) => {
-                    const currentValues = filter.value || [];
+                    const currentValues = rule.value || [];
                     if (checked) {
-                      handleValueChange([...currentValues, option]);
+                      handleRuleValueChange(rule.id, [...currentValues, option]);
                     } else {
-                      handleValueChange(currentValues.filter((v: string) => v !== option));
+                      handleRuleValueChange(rule.id, currentValues.filter((v: string) => v !== option));
                     }
                   }}
                 />
-                <label htmlFor={`${filter.id}-${option}`} className="text-sm">
+                <label htmlFor={`${rule.id}-${option}`} className="text-sm">
                   {option}
                 </label>
               </div>
@@ -80,15 +116,15 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
           <div className="flex items-center gap-2">
             <Input
               placeholder="Min"
-              value={filter.value?.min || ""}
-              onChange={(e) => handleValueChange({ ...filter.value, min: e.target.value })}
+              value={rule.value?.min || ""}
+              onChange={(e) => handleRuleValueChange(rule.id, { ...rule.value, min: e.target.value })}
               className="w-20"
             />
             <span className="text-gray-500">-</span>
             <Input
               placeholder="Max"
-              value={filter.value?.max || ""}
-              onChange={(e) => handleValueChange({ ...filter.value, max: e.target.value })}
+              value={rule.value?.max || ""}
+              onChange={(e) => handleRuleValueChange(rule.id, { ...rule.value, max: e.target.value })}
               className="w-20"
             />
           </div>
@@ -98,8 +134,8 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
         return (
           <Input
             placeholder="Enter value"
-            value={filter.value || ""}
-            onChange={(e) => handleValueChange(e.target.value)}
+            value={rule.value || ""}
+            onChange={(e) => handleRuleValueChange(rule.id, e.target.value)}
           />
         );
 
@@ -107,6 +143,17 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
         return null;
     }
   };
+
+  // Initialize with at least one rule if none exist
+  if (!filter.rules || filter.rules.length === 0) {
+    const initialRule: FilterRule = {
+      id: `${filter.id}-rule-1`,
+      value: filter.type === 'multiselect' ? [] : filter.type === 'range' ? { min: '', max: '' } : '',
+      score: [5]
+    };
+    onFilterUpdate(filter.id, { rules: [initialRule] });
+    return null; // Re-render with the new rule
+  }
 
   return (
     <div className="border border-gray-200 rounded-lg p-4 space-y-4">
@@ -124,32 +171,84 @@ const FilterConfig = ({ filter, onFilterUpdate, onFilterRemove }: FilterConfigPr
         </Button>
       </div>
 
-      <div className="space-y-3">
-        <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
-            Value
-          </label>
-          {renderValueInput()}
-        </div>
+      <div className="space-y-4">
+        {filter.rules.map((rule, index) => (
+          <div key={rule.id}>
+            {/* Show operator selector for rules after the first one */}
+            {index > 0 && (
+              <div className="flex justify-center mb-3">
+                <Select 
+                  value={rule.operator || 'OR'} 
+                  onValueChange={(value: 'AND' | 'OR') => handleRuleOperatorChange(rule.id, value)}
+                >
+                  <SelectTrigger className="w-20 h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white z-50">
+                    <SelectItem value="OR">OR</SelectItem>
+                    <SelectItem value="AND">AND</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">
-              Score
-            </label>
-            <span className="text-sm text-gray-500">
-              {filter.score?.[0] || 5}/10
-            </span>
+            <Card className="border border-gray-100 bg-gray-50">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">
+                    Rule {index + 1}
+                  </span>
+                  {filter.rules.length > 1 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeRule(rule.id)}
+                      className="h-auto p-1 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Value
+                  </label>
+                  {renderRuleValueInput(rule)}
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Score
+                    </label>
+                    <span className="text-sm text-gray-500">
+                      {rule.score?.[0] || 5}/10
+                    </span>
+                  </div>
+                  <Slider
+                    value={rule.score || [5]}
+                    onValueChange={(score) => handleRuleScoreChange(rule.id, score)}
+                    max={10}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <Slider
-            value={filter.score || [5]}
-            onValueChange={handleScoreChange}
-            max={10}
-            min={1}
-            step={1}
-            className="w-full"
-          />
-        </div>
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addNewRule}
+          className="w-full border-dashed text-blue-600 border-blue-300 hover:bg-blue-50"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Rule
+        </Button>
       </div>
     </div>
   );

@@ -16,13 +16,19 @@ interface EmailScoring {
   abusive: string;
 }
 
+interface FilterRule {
+  id: string;
+  value: any;
+  score: number[];
+  operator?: 'AND' | 'OR';
+}
+
 interface FilterData {
   id: string;
   label: string;
   type: 'select' | 'multiselect' | 'range' | 'text';
   options?: string[];
-  value?: any;
-  score: number[];
+  rules: FilterRule[];
 }
 
 interface FitCriteria {
@@ -85,7 +91,11 @@ const EnhancedICPDefinitionStep = ({
     if (filterOption) {
       const newFilter: FilterData = {
         ...filterOption,
-        score: [5]
+        rules: [{
+          id: `${filterId}-rule-1`,
+          value: filterOption.type === 'multiselect' ? [] : filterOption.type === 'range' ? { min: '', max: '' } : '',
+          score: [5]
+        }]
       };
       setUserFilters([...userFilters, newFilter]);
     }
@@ -96,7 +106,11 @@ const EnhancedICPDefinitionStep = ({
     if (filterOption) {
       const newFilter: FilterData = {
         ...filterOption,
-        score: [5]
+        rules: [{
+          id: `${filterId}-rule-1`,
+          value: filterOption.type === 'multiselect' ? [] : filterOption.type === 'range' ? { min: '', max: '' } : '',
+          score: [5]
+        }]
       };
       setCompanyFilters([...companyFilters, newFilter]);
     }
