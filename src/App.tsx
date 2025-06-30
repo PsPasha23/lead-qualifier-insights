@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Reports from "./pages/Reports";
 import Dashboard from "./pages/Dashboard";
+import LeadQualitySetup from "./pages/LeadQualitySetup";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/lead-quality-setup" element={<LeadQualitySetup />} />
           </Routes>
         </Layout>
       </BrowserRouter>
