@@ -45,7 +45,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
       <div className="space-y-4">
         <div>
           <Label className="text-lg font-semibold text-gray-900 mb-4 block">
-            LEAD_QUALIFICATION Goal Target (score points)
+            Lead Quality Rate Goal Target (score)
           </Label>
           <div className="w-48">
             <Input
@@ -84,10 +84,10 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
             
             {/* Value labels under progress bar */}
             <div className="flex justify-between text-xs text-gray-600 mt-2">
-              <span>0 score points</span>
-              <span>{qualityThresholds.goodLead} score points</span>
-              <span>{qualityThresholds.fairLeadMax} score points</span>
-              <span>10 score points</span>
+              <span>0 score</span>
+              <span>{qualityThresholds.goodLead} score</span>
+              <span>{qualityThresholds.fairLeadMax} score</span>
+              <span>10 score</span>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                 <h4 className="font-semibold text-green-900">Excellent</h4>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                {qualityThresholds.goodLead} - 10 score points
+                {qualityThresholds.goodLead} - 10 score
               </p>
               <div className="space-y-3">
                 <div>
@@ -127,7 +127,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                 <h4 className="font-semibold text-yellow-900">Good</h4>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                {qualityThresholds.fairLeadMax + 1} - {qualityThresholds.goodLead - 1} score points
+                {qualityThresholds.fairLeadMax + 1} - {qualityThresholds.goodLead - 1} score
               </p>
               <div className="space-y-3">
                 <div>
@@ -154,7 +154,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                 <h4 className="font-semibold text-red-900">Fair</h4>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                {qualityThresholds.fairLeadMax + 1}+ score points
+                {qualityThresholds.fairLeadMax + 1}+ score
               </p>
               <div className="space-y-3">
                 <div>
@@ -183,7 +183,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
               className="h-auto p-6 text-left flex-col items-start space-y-2"
               onClick={() => applyTemplate('conservative')}
             >
-              <div className="font-semibold">Conservative (9 score points)</div>
+              <div className="font-semibold">Conservative (9 score)</div>
               <div className="text-sm text-gray-600">Good for new businesses</div>
             </Button>
             
@@ -192,7 +192,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
               className="h-auto p-6 text-left flex-col items-start space-y-2"
               onClick={() => applyTemplate('ambitious')}
             >
-              <div className="font-semibold">Ambitious (8 score points)</div>
+              <div className="font-semibold">Ambitious (8 score)</div>
               <div className="text-sm text-gray-600">For established brands</div>
             </Button>
             
@@ -201,7 +201,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
               className="h-auto p-6 text-left flex-col items-start space-y-2"
               onClick={() => applyTemplate('aggressive')}
             >
-              <div className="font-semibold">Aggressive (7 score points)</div>
+              <div className="font-semibold">Aggressive (7 score)</div>
               <div className="text-sm text-gray-600">For high-performing teams</div>
             </Button>
           </div>
