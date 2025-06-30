@@ -1,10 +1,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { QualityThresholds } from "../../pages/LeadQualitySetup";
 
 interface QualityGoalsStepProps {
@@ -20,192 +20,193 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
     });
   };
 
+  const applyTemplate = (template: 'conservative' | 'ambitious' | 'aggressive') => {
+    const templates = {
+      conservative: { goodLead: 9, fairLeadMin: 6, fairLeadMax: 8, poorLead: 5 },
+      ambitious: { goodLead: 8, fairLeadMin: 5, fairLeadMax: 7, poorLead: 4 },
+      aggressive: { goodLead: 7, fairLeadMin: 4, fairLeadMax: 6, poorLead: 3 }
+    };
+    onQualityThresholdsChange(templates[template]);
+  };
+
+  // Calculate positions for the progress bar (0-100%)
+  const excellentEnd = (qualityThresholds.goodLead / 10) * 100;
+  const goodEnd = (qualityThresholds.fairLeadMax / 10) * 100;
+  const fairEnd = (qualityThresholds.poorLead / 10) * 100;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Define Lead Quality Goals
-        </h3>
-        <p className="text-gray-600 mb-6">
-          Set score thresholds to automatically categorize leads based on their qualification score (1-10 scale).
-        </p>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Edit score ranges</h3>
+        <p className="text-gray-600">Drag the markers to define your progress zones</p>
       </div>
 
-      {/* Threshold Configuration */}
-      <div className="space-y-6">
-        {/* Good Lead Threshold */}
-        <Card className="border-green-200 bg-green-50">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-base text-green-900">
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Good Lead Threshold
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-sm font-medium text-green-800">
-                Score ≥ {qualityThresholds.goodLead}
-              </Label>
-              <Badge className="bg-green-100 text-green-800 border-green-300">
-                High Priority
-              </Badge>
-            </div>
-            <Slider
-              value={[qualityThresholds.goodLead]}
-              onValueChange={(value) => handleThresholdChange('goodLead', value[0])}
+      {/* Goal Target */}
+      <div className="space-y-4">
+        <div>
+          <Label className="text-lg font-semibold text-gray-900 mb-4 block">
+            LEAD_QUALIFICATION Goal Target (score points)
+          </Label>
+          <div className="w-48">
+            <Input
+              type="number"
+              value={qualityThresholds.goodLead}
+              onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) || 7)}
+              min={1}
               max={10}
-              min={1}
-              step={1}
-              className="w-full"
+              className="text-2xl font-bold h-16 text-center border-2"
             />
-            <div className="flex items-center space-x-4">
-              <Input
-                type="number"
-                value={qualityThresholds.goodLead}
-                onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) || 1)}
-                min={1}
-                max={10}
-                className="w-20 h-8 text-sm border-green-300"
-              />
-              <span className="text-sm text-green-700">
-                Leads ready for immediate sales outreach
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Fair Lead Range */}
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-base text-yellow-900">
-              <AlertCircle className="h-4 w-4 mr-2" />
-              Fair Lead Range
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-sm font-medium text-yellow-800">
-                Score {qualityThresholds.fairLeadMin} - {qualityThresholds.fairLeadMax}
-              </Label>
-              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
-                Medium Priority
-              </Badge>
+        {/* Progress Bar Section */}
+        <div className="space-y-6 mt-8">
+          {/* Labels */}
+          <div className="flex justify-between text-sm font-medium">
+            <span className="text-green-700">Excellent</span>
+            <span className="text-yellow-700">Good</span>
+            <span className="text-red-700">Fair</span>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="relative">
+            <div className="h-8 w-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-400 rounded-lg relative">
+              {/* Markers */}
+              <div 
+                className="absolute top-0 bottom-0 w-1 bg-blue-600 rounded"
+                style={{ left: `${excellentEnd}%` }}
+              />
+              <div 
+                className="absolute top-0 bottom-0 w-1 bg-blue-600 rounded"
+                style={{ left: `${goodEnd}%` }}
+              />
             </div>
             
-            <div className="space-y-3">
-              <div>
-                <Label className="text-xs text-yellow-700 mb-1 block">Minimum Score</Label>
-                <Slider
-                  value={[qualityThresholds.fairLeadMin]}
-                  onValueChange={(value) => handleThresholdChange('fairLeadMin', value[0])}
-                  max={qualityThresholds.fairLeadMax}
-                  min={1}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-yellow-700 mb-1 block">Maximum Score</Label>
-                <Slider
-                  value={[qualityThresholds.fairLeadMax]}
-                  onValueChange={(value) => handleThresholdChange('fairLeadMax', value[0])}
-                  max={qualityThresholds.goodLead - 1}
-                  min={qualityThresholds.fairLeadMin}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
+            {/* Value labels under progress bar */}
+            <div className="flex justify-between text-xs text-gray-600 mt-2">
+              <span>0 score points</span>
+              <span>{qualityThresholds.goodLead} score points</span>
+              <span>{qualityThresholds.fairLeadMax} score points</span>
+              <span>10 score points</span>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="number"
-                  value={qualityThresholds.fairLeadMin}
-                  onChange={(e) => handleThresholdChange('fairLeadMin', parseInt(e.target.value) || 1)}
-                  min={1}
-                  max={qualityThresholds.fairLeadMax}
-                  className="w-16 h-8 text-sm border-yellow-300"
-                />
-                <span className="text-sm text-yellow-700">to</span>
-                <Input
-                  type="number"
-                  value={qualityThresholds.fairLeadMax}
-                  onChange={(e) => handleThresholdChange('fairLeadMax', parseInt(e.target.value) || 6)}
-                  min={qualityThresholds.fairLeadMin}
-                  max={qualityThresholds.goodLead - 1}
-                  className="w-16 h-8 text-sm border-yellow-300"
-                />
-              </div>
-              <span className="text-sm text-yellow-700">
-                Leads requiring nurturing before sales contact
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Poor Lead Threshold */}
-        <Card className="border-red-200 bg-red-50">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-base text-red-900">
-              <XCircle className="h-4 w-4 mr-2" />
-              Poor Lead Threshold
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-sm font-medium text-red-800">
-                Score ≤ {qualityThresholds.poorLead}
-              </Label>
-              <Badge className="bg-red-100 text-red-800 border-red-300">
-                Low Priority
-              </Badge>
-            </div>
-            <Slider
-              value={[qualityThresholds.poorLead]}
-              onValueChange={(value) => handleThresholdChange('poorLead', value[0])}
-              max={qualityThresholds.fairLeadMin - 1}
-              min={1}
-              step={1}
-              className="w-full"
-            />
-            <div className="flex items-center space-x-4">
-              <Input
-                type="number"
-                value={qualityThresholds.poorLead}
-                onChange={(e) => handleThresholdChange('poorLead', parseInt(e.target.value) || 1)}
-                min={1}
-                max={qualityThresholds.fairLeadMin - 1}
-                className="w-20 h-8 text-sm border-red-300"
-              />
-              <span className="text-sm text-red-700">
-                Leads not suitable for current sales efforts
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Quality Level Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          {/* Excellent Card */}
+          <Card className="border-green-200">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                <h4 className="font-semibold text-green-900">Excellent</h4>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">
+                {qualityThresholds.goodLead} - 10 score points
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-gray-600">Upper bound:</Label>
+                  <Input
+                    type="number"
+                    value={10}
+                    disabled
+                    className="mt-1 bg-gray-50 text-sm"
+                  />
+                </div>
+                <p className="text-sm font-medium text-green-800">Excellent Performance</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Good Card */}
+          <Card className="border-yellow-200">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                <h4 className="font-semibold text-yellow-900">Good</h4>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">
+                {qualityThresholds.fairLeadMax + 1} - {qualityThresholds.goodLead - 1} score points
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-gray-600">Upper bound:</Label>
+                  <Input
+                    type="number"
+                    value={qualityThresholds.goodLead - 1}
+                    onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) + 1 || 8)}
+                    min={qualityThresholds.fairLeadMax + 1}
+                    max={9}
+                    className="mt-1 text-sm"
+                  />
+                </div>
+                <p className="text-sm font-medium text-yellow-800">Good Progress</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Fair Card */}
+          <Card className="border-red-200">
+            <CardContent className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
+                <h4 className="font-semibold text-red-900">Fair</h4>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">
+                {qualityThresholds.fairLeadMax + 1}+ score points
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs text-gray-600">Lower bound:</Label>
+                  <Input
+                    type="number"
+                    value={qualityThresholds.fairLeadMax + 1}
+                    onChange={(e) => handleThresholdChange('fairLeadMax', parseInt(e.target.value) - 1 || 5)}
+                    min={qualityThresholds.poorLead + 1}
+                    max={qualityThresholds.goodLead - 1}
+                    className="mt-1 text-sm"
+                  />
+                </div>
+                <p className="text-sm font-medium text-red-800">Needs Work</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Templates */}
+        <div className="mt-12">
+          <h4 className="text-lg font-semibold text-gray-900 mb-6">Quick Templates</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button
+              variant="outline"
+              className="h-auto p-6 text-left flex-col items-start space-y-2"
+              onClick={() => applyTemplate('conservative')}
+            >
+              <div className="font-semibold">Conservative (9 score points)</div>
+              <div className="text-sm text-gray-600">Good for new businesses</div>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="h-auto p-6 text-left flex-col items-start space-y-2"
+              onClick={() => applyTemplate('ambitious')}
+            >
+              <div className="font-semibold">Ambitious (8 score points)</div>
+              <div className="text-sm text-gray-600">For established brands</div>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="h-auto p-6 text-left flex-col items-start space-y-2"
+              onClick={() => applyTemplate('aggressive')}
+            >
+              <div className="font-semibold">Aggressive (7 score points)</div>
+              <div className="text-sm text-gray-600">For high-performing teams</div>
+            </Button>
+          </div>
+        </div>
       </div>
-
-      {/* Summary */}
-      <Card className="border border-gray-200">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Lead Quality Summary</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="flex items-center justify-between py-1">
-            <span className="text-sm text-green-700">✅ Good Leads:</span>
-            <Badge className="bg-green-100 text-green-800">Score ≥ {qualityThresholds.goodLead}</Badge>
-          </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="text-sm text-yellow-700">⚠️ Fair Leads:</span>
-            <Badge className="bg-yellow-100 text-yellow-800">Score {qualityThresholds.fairLeadMin}-{qualityThresholds.fairLeadMax}</Badge>
-          </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="text-sm text-red-700">❌ Poor Leads:</span>
-            <Badge className="bg-red-100 text-red-800">Score ≤ {qualityThresholds.poorLead}</Badge>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
