@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import VerticalStepper from "@/components/VerticalStepper";
 import BusinessTypeStep from "@/components/steps/BusinessTypeStep";
 import ICPDefinitionStepV2 from "@/components/steps/ICPDefinitionStepV2";
 import LeadSourcesStep from "@/components/steps/LeadSourcesStep";
-import QualityGoalsStep from "@/components/steps/QualityGoalsStep";
+import EnhancedQualityGoalsStep from "@/components/steps/EnhancedQualityGoalsStep";
 
 export interface EmailScoring {
   corporate: 'high' | 'medium' | 'low';
@@ -167,7 +166,7 @@ const LeadQualitySetup = () => {
         );
       case 4:
         return (
-          <QualityGoalsStep
+          <EnhancedQualityGoalsStep
             qualityThresholds={qualityThresholds}
             onQualityThresholdsChange={setQualityThresholds}
           />
