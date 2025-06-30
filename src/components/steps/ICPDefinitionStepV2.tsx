@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight, Mail, Target, HelpCircle } from "lucide-react";
+import { ChevronDown, ChevronRight, Mail, Target, HelpCircle, X, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import FilterSelector from "../FilterSelector";
-import FilterConfig from "../FilterConfig";
 import { EmailScoring, FilterData } from "../../pages/LeadQualitySetup";
 
 interface ICPDefinitionStepV2Props {
@@ -50,14 +51,67 @@ const ICPDefinitionStepV2 = ({
     }
   };
 
-  const handleUpdateFilter = (filterId: string, updates: Partial<FilterData>) => {
-    onFitCriteriaChange(
-      fitCriteria.map(f => f.id === filterId ? { ...f, ...updates } : f)
-    );
-  };
-
   const handleRemoveFilter = (filterId: string) => {
     onFitCriteriaChange(fitCriteria.filter(f => f.id !== filterId));
+  };
+
+  const handleAddRule = (filterId: string) => {
+    const filter = fitCriteria.find(f => f.id === filterId);
+    if (filter) {
+      const newRule = {
+        id: `${filterId}-rule-${Date.now()}`,
+        value: filter.type === 'multiselect' ? [] : filter.type === 'range' ? { min: '', max: '' } : '',
+        score: [5]
+      };
+      const updatedFilter = {
+        ...filter,
+        rules: [...filter.rules, newRule]
+      };
+      onFitCriteriaChange(fitCriteria.map(f => f.id === filterId ? updatedFilter : f));
+    }
+  };
+
+  const handleRemoveRule = (filterId: string, ruleId: string) => {
+    const filter = fitCriteria.find(f => f.id === filterId);
+    if (filter && filter.rules.length > 1) {
+      const updatedFilter = {
+        ...filter,
+        rules: filter.rules.filter(r => r.id !== ruleId)
+      };
+      onFitCriteriaChange(fitCriteria.map(f => f.id === filterId ? updatedFilter : f));
+    }
+  };
+
+  const handleRuleValueChange = (filterId: string, ruleId: string, newValue: any) => {
+    const filter = fitCriteria.find(f => f.id === filterId);
+    if (filter) {
+      const updatedRules = filter.rules.map(rule => 
+        rule.id === ruleId ? { ...rule, value: newValue } : rule
+      );
+      const updatedFilter = { ...filter, rules: updatedRules };
+      onFitCriteriaChange(fitCriteria.map(f => f.id === filterId ? updatedFilter : f));
+    }
+  };
+
+  const handleRuleScoreChange = (filterId: string, ruleId: string, score: number[]) => {
+    const filter = fitCriteria.find(f => f.id === filterId);
+    if (filter) {
+      const updatedRules = filter.rules.map(rule => 
+        rule.id === ruleId ? { ...rule, score } : rule
+      );
+      const updatedFilter = { ...filter, rules: updatedRules };
+      onFitCriteriaChange(fitCriteria.map(f => f.id === filterId ? updatedFilter : f));
+    }
+  };
+
+  const renderRuleValue = (filter: FilterData, rule: any) => {
+    if (filter.type === 'range') {
+      return `is between ${rule.value?.min || ''} to ${rule.value?.max || ''}`;
+    } else if (filter.type === 'multiselect') {
+      return rule.value?.length > 0 ? rule.value.join(', ') : 'Select values';
+    } else {
+      return rule.value || 'Select value';
+    }
   };
 
   return (
@@ -165,14 +219,14 @@ const ICPDefinitionStepV2 = ({
         </CardContent>
       </Card>
 
-      {/* Fit Criteria - Rule Builder */}
+      {/* Fit Criteria - Updated Design */}
       <Card className="border border-gray-200">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Fit Criteria - Rule Builder</CardTitle>
+              <CardTitle className="text-base">Fit Criteria</CardTitle>
               <CardDescription className="text-sm">
-                Define rules with AND/OR logic. Each property can have multiple rules with scores 1-10.
+                Define rules with OR logic. Each property can have multiple conditions.
               </CardDescription>
             </div>
             <FilterSelector 
@@ -182,19 +236,106 @@ const ICPDefinitionStepV2 = ({
             />
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {fitCriteria.map((filter) => (
-            <FilterConfig
-              key={filter.id}
-              filter={filter}
-              onFilterUpdate={handleUpdateFilter}
-              onFilterRemove={handleRemoveFilter}
-            />
+            <div key={filter.id} className="space-y-3">
+              {/* Filter Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-900">{filter.label}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveFilter(filter.id)}
+                    className="h-4 w-4 p-0 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-gray-500">Importance</span>
+                </div>
+              </div>
+
+              {/* Filter Rules */}
+              <div className="space-y-2">
+                {filter.rules.map((rule, index) => (
+                  <div key={rule.id}>
+                    {index > 0 && (
+                      <div className="flex justify-center my-1">
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">or</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3 border border-gray-200">
+                      <div className="flex items-center space-x-2 flex-1">
+                        <span className="text-sm text-gray-700 min-w-0">
+                          {renderRuleValue(filter, rule)}
+                        </span>
+                        {filter.rules.length > 1 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveRule(filter.id, rule.id)}
+                            className="h-4 w-4 p-0 text-gray-400 hover:text-gray-600 flex-shrink-0"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex items-center space-x-3 ml-4">
+                        <div className="w-24">
+                          <Slider
+                            value={rule.score || [5]}
+                            onValueChange={(score) => handleRuleScoreChange(filter.id, rule.id, score)}
+                            max={10}
+                            min={1}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                          <span className="text-xs font-medium text-blue-700">
+                            {rule.score?.[0] || 5}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add Rule Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleAddRule(filter.id)}
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2 h-auto"
+              >
+                <Plus className="h-3 w-3 mr-1" />
+                Add more values
+              </Button>
+            </div>
           ))}
+
           {fitCriteria.length === 0 && (
-            <p className="text-sm text-gray-500 text-center py-4">
-              No fit criteria added yet. Click "Add Filter" to define your ICP rules.
-            </p>
+            <div className="text-center py-8">
+              <p className="text-sm text-gray-500 mb-2">No fit criteria added yet.</p>
+              <p className="text-xs text-gray-400">Click "Add Filter" to define your ICP rules.</p>
+            </div>
+          )}
+
+          {/* Add Criteria Button */}
+          {fitCriteria.length > 0 && (
+            <div className="pt-4 border-t border-gray-100">
+              <FilterSelector 
+                availableFilters={filterOptions}
+                onFilterAdd={handleAddFilter}
+                usedFilters={fitCriteria.map(f => f.id)}
+                buttonText="Add criteria"
+                buttonVariant="outline"
+                buttonIcon={Plus}
+              />
+            </div>
           )}
         </CardContent>
       </Card>
