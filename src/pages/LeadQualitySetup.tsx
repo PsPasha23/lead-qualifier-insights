@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
@@ -45,16 +45,16 @@ const LeadQualitySetup = () => {
   // Step 1: Business Type
   const [businessType, setBusinessType] = useState<'B2B' | 'B2C' | null>(null);
   
-  // Step 2: ICP Definition
+  // Step 2: Lead Sources (moved up)
+  const [leadSources, setLeadSources] = useState<string[]>(['signup-users']);
+  
+  // Step 3: ICP Definition (moved down)
   const [emailScoring, setEmailScoring] = useState<EmailScoring>({
     corporate: 'high',
     personal: 'medium',
     abusive: 'low'
   });
   const [fitCriteria, setFitCriteria] = useState<FilterData[]>([]);
-  
-  // Step 3: Lead Sources
-  const [leadSources, setLeadSources] = useState<string[]>(['signup-users']);
   
   // Step 4: Quality Goals
   const [qualityThresholds, setQualityThresholds] = useState<QualityThresholds>({
@@ -63,6 +63,23 @@ const LeadQualitySetup = () => {
     fairLeadMax: 60,
     poorLead: 30
   });
+
+  // Auto-adjust email scoring based on business type
+  useEffect(() => {
+    if (businessType === 'B2B') {
+      setEmailScoring(prev => ({
+        ...prev,
+        corporate: 'high',
+        personal: 'medium'
+      }));
+    } else if (businessType === 'B2C') {
+      setEmailScoring(prev => ({
+        ...prev,
+        corporate: 'medium',
+        personal: 'high'
+      }));
+    }
+  }, [businessType]);
 
   const steps = [
     { 
@@ -74,17 +91,17 @@ const LeadQualitySetup = () => {
     },
     { 
       id: 2, 
-      title: "Define Your ICP", 
-      description: "Set your ideal customer profile",
+      title: "Select Lead Sources", 
+      description: "Choose your data sources",
       isComplete: currentStep > 2,
-      isValid: !!businessType && fitCriteria.length >= 0 // Email scoring is always valid
+      isValid: leadSources.length > 0
     },
     { 
       id: 3, 
-      title: "Select Lead Sources", 
-      description: "Choose your data sources",
+      title: "Define Your ICP", 
+      description: "Set your ideal customer profile",
       isComplete: currentStep > 3,
-      isValid: leadSources.length > 0
+      isValid: !!businessType && fitCriteria.length >= 0 // Email scoring is always valid
     },
     { 
       id: 4, 
@@ -98,9 +115,9 @@ const LeadQualitySetup = () => {
   const handleSave = () => {
     const config = {
       businessType,
+      leadSources,
       emailScoring,
       fitCriteria,
-      leadSources,
       qualityThresholds
     };
     
@@ -131,6 +148,13 @@ const LeadQualitySetup = () => {
         );
       case 2:
         return (
+          <LeadSourcesStep
+            leadSources={leadSources}
+            onLeadSourcesChange={setLeadSources}
+          />
+        );
+      case 3:
+        return (
           <ICPDefinitionStepV2
             businessType={businessType}
             emailScoring={emailScoring}
@@ -139,13 +163,6 @@ const LeadQualitySetup = () => {
             }
             fitCriteria={fitCriteria}
             onFitCriteriaChange={setFitCriteria}
-          />
-        );
-      case 3:
-        return (
-          <LeadSourcesStep
-            leadSources={leadSources}
-            onLeadSourcesChange={setLeadSources}
           />
         );
       case 4:
