@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus } from "lucide-react";
+import { Plus, LucideIcon } from "lucide-react";
 
 interface FilterOption {
   id: string;
@@ -15,17 +15,27 @@ interface FilterSelectorProps {
   availableFilters: FilterOption[];
   onFilterAdd: (filterId: string) => void;
   usedFilters: string[];
+  buttonText?: string;
+  buttonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  buttonIcon?: LucideIcon;
 }
 
-const FilterSelector = ({ availableFilters, onFilterAdd, usedFilters }: FilterSelectorProps) => {
+const FilterSelector = ({ 
+  availableFilters, 
+  onFilterAdd, 
+  usedFilters,
+  buttonText = "Add Filter",
+  buttonVariant = "outline",
+  buttonIcon: ButtonIcon = Plus
+}: FilterSelectorProps) => {
   const unusedFilters = availableFilters.filter(filter => !usedFilters.includes(filter.id));
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="border-dashed">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Filter
+        <Button variant={buttonVariant} size="sm" className="border-dashed">
+          <ButtonIcon className="h-4 w-4 mr-2" />
+          {buttonText}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-white z-50">
