@@ -22,17 +22,17 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
 
   const applyTemplate = (template: 'conservative' | 'ambitious' | 'aggressive') => {
     const templates = {
-      conservative: { goodLead: 9, fairLeadMin: 6, fairLeadMax: 8, poorLead: 5 },
-      ambitious: { goodLead: 8, fairLeadMin: 5, fairLeadMax: 7, poorLead: 4 },
-      aggressive: { goodLead: 7, fairLeadMin: 4, fairLeadMax: 6, poorLead: 3 }
+      conservative: { goodLead: 90, fairLeadMin: 60, fairLeadMax: 80, poorLead: 50 },
+      ambitious: { goodLead: 80, fairLeadMin: 50, fairLeadMax: 70, poorLead: 40 },
+      aggressive: { goodLead: 70, fairLeadMin: 40, fairLeadMax: 60, poorLead: 30 }
     };
     onQualityThresholdsChange(templates[template]);
   };
 
   // Calculate positions for the progress bar (0-100%)
-  const excellentEnd = (qualityThresholds.goodLead / 10) * 100;
-  const goodEnd = (qualityThresholds.fairLeadMax / 10) * 100;
-  const fairEnd = (qualityThresholds.poorLead / 10) * 100;
+  const excellentEnd = qualityThresholds.goodLead;
+  const goodEnd = qualityThresholds.fairLeadMax;
+  const fairEnd = qualityThresholds.poorLead;
 
   return (
     <div className="space-y-8">
@@ -45,15 +45,15 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
       <div className="space-y-4">
         <div>
           <Label className="text-lg font-semibold text-gray-900 mb-4 block">
-            Lead Quality Rate Goal Target (score)
+            Lead Quality Rate Goal Target (%)
           </Label>
           <div className="w-48">
             <Input
               type="number"
               value={qualityThresholds.goodLead}
-              onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) || 7)}
-              min={1}
-              max={10}
+              onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) || 70)}
+              min={0}
+              max={100}
               className="text-2xl font-bold h-16 text-center border-2"
             />
           </div>
@@ -84,10 +84,10 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
             
             {/* Value labels under progress bar */}
             <div className="flex justify-between text-xs text-gray-600 mt-2">
-              <span>0 score</span>
-              <span>{qualityThresholds.goodLead} score</span>
-              <span>{qualityThresholds.fairLeadMax} score</span>
-              <span>10 score</span>
+              <span>0%</span>
+              <span>{qualityThresholds.goodLead}%</span>
+              <span>{qualityThresholds.fairLeadMax}%</span>
+              <span>100%</span>
             </div>
           </div>
         </div>
@@ -102,14 +102,14 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                 <h4 className="font-semibold text-green-900">Excellent</h4>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                {qualityThresholds.goodLead} - 10 score
+                {qualityThresholds.goodLead}% - 100%
               </p>
               <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-gray-600">Upper bound:</Label>
                   <Input
                     type="number"
-                    value={10}
+                    value={100}
                     disabled
                     className="mt-1 bg-gray-50 text-sm"
                   />
@@ -127,7 +127,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                 <h4 className="font-semibold text-yellow-900">Good</h4>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                {qualityThresholds.fairLeadMax + 1} - {qualityThresholds.goodLead - 1} score
+                {qualityThresholds.fairLeadMax + 1}% - {qualityThresholds.goodLead - 1}%
               </p>
               <div className="space-y-3">
                 <div>
@@ -135,9 +135,9 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                   <Input
                     type="number"
                     value={qualityThresholds.goodLead - 1}
-                    onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) + 1 || 8)}
+                    onChange={(e) => handleThresholdChange('goodLead', parseInt(e.target.value) + 1 || 80)}
                     min={qualityThresholds.fairLeadMax + 1}
-                    max={9}
+                    max={99}
                     className="mt-1 text-sm"
                   />
                 </div>
@@ -154,7 +154,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                 <h4 className="font-semibold text-red-900">Fair</h4>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                {qualityThresholds.fairLeadMax + 1}+ score
+                {qualityThresholds.fairLeadMax + 1}%+
               </p>
               <div className="space-y-3">
                 <div>
@@ -162,7 +162,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
                   <Input
                     type="number"
                     value={qualityThresholds.fairLeadMax + 1}
-                    onChange={(e) => handleThresholdChange('fairLeadMax', parseInt(e.target.value) - 1 || 5)}
+                    onChange={(e) => handleThresholdChange('fairLeadMax', parseInt(e.target.value) - 1 || 50)}
                     min={qualityThresholds.poorLead + 1}
                     max={qualityThresholds.goodLead - 1}
                     className="mt-1 text-sm"
@@ -183,7 +183,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
               className="h-auto p-6 text-left flex-col items-start space-y-2"
               onClick={() => applyTemplate('conservative')}
             >
-              <div className="font-semibold">Conservative (9 score)</div>
+              <div className="font-semibold">Conservative (90%)</div>
               <div className="text-sm text-gray-600">Good for new businesses</div>
             </Button>
             
@@ -192,7 +192,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
               className="h-auto p-6 text-left flex-col items-start space-y-2"
               onClick={() => applyTemplate('ambitious')}
             >
-              <div className="font-semibold">Ambitious (8 score)</div>
+              <div className="font-semibold">Ambitious (80%)</div>
               <div className="text-sm text-gray-600">For established brands</div>
             </Button>
             
@@ -201,7 +201,7 @@ const QualityGoalsStep = ({ qualityThresholds, onQualityThresholdsChange }: Qual
               className="h-auto p-6 text-left flex-col items-start space-y-2"
               onClick={() => applyTemplate('aggressive')}
             >
-              <div className="font-semibold">Aggressive (7 score)</div>
+              <div className="font-semibold">Aggressive (70%)</div>
               <div className="text-sm text-gray-600">For high-performing teams</div>
             </Button>
           </div>

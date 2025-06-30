@@ -58,10 +58,10 @@ const LeadQualitySetup = () => {
   
   // Step 4: Quality Goals
   const [qualityThresholds, setQualityThresholds] = useState<QualityThresholds>({
-    goodLead: 7,
-    fairLeadMin: 4,
-    fairLeadMax: 6,
-    poorLead: 3
+    goodLead: 70,
+    fairLeadMin: 40,
+    fairLeadMax: 60,
+    poorLead: 30
   });
 
   const steps = [
