@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight, Mail, Target, HelpCircle, Clock } from "lucide-react";
+import { ChevronDown, ChevronRight, Mail, Target, HelpCircle, Clock, TrendingUp } from "lucide-react";
 import { EmailScoring, FilterData } from "../../pages/LeadQualitySetup";
 
 interface ICPDefinitionStepV2Props {
@@ -22,21 +22,21 @@ const ICPDefinitionStepV2 = ({
   fitCriteria, 
   onFitCriteriaChange 
 }: ICPDefinitionStepV2Props) => {
-  const [isICPEducationOpen, setIsICPEducationOpen] = useState(false);
+  const [isScoringEducationOpen, setIsScoringEducationOpen] = useState(false);
 
   return (
     <div className="space-y-6">
-      {/* ICP Education Section */}
+      {/* Lead Scoring Education Section */}
       <Card className="border-blue-200 bg-blue-50">
-        <Collapsible open={isICPEducationOpen} onOpenChange={setIsICPEducationOpen}>
+        <Collapsible open={isScoringEducationOpen} onOpenChange={setIsScoringEducationOpen}>
           <CollapsibleTrigger className="w-full">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <HelpCircle className="h-5 w-5 text-blue-600" />
-                  <CardTitle className="text-base text-blue-900">What is ICP?</CardTitle>
+                  <CardTitle className="text-base text-blue-900">What is Lead Scoring?</CardTitle>
                 </div>
-                {isICPEducationOpen ? (
+                {isScoringEducationOpen ? (
                   <ChevronDown className="h-4 w-4 text-blue-600" />
                 ) : (
                   <ChevronRight className="h-4 w-4 text-blue-600" />
@@ -47,7 +47,7 @@ const ICPDefinitionStepV2 = ({
           <CollapsibleContent>
             <CardContent className="pt-0">
               <p className="text-sm text-blue-800">
-                An Ideal Customer Profile (ICP) represents the characteristics of a company or individual that's most likely to become a high-value customer. Use filters like region, company size, and user roles to define your ICP and assign scores to different attributes.
+                Lead scoring is a methodology used to rank prospects based on their likelihood to convert into customers. Assign scores to different attributes like email types, company characteristics, and engagement activities to prioritize your most valuable leads.
               </p>
             </CardContent>
           </CollapsibleContent>
@@ -57,10 +57,10 @@ const ICPDefinitionStepV2 = ({
       {/* Target Display */}
       {businessType && (
         <div className="flex items-center space-x-3">
-          <Target className="h-5 w-5 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Target:</span>
+          <TrendingUp className="h-5 w-5 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">Scoring Target:</span>
           <Badge variant="outline" className={businessType === 'B2B' ? 'bg-blue-50 text-blue-700 border-blue-300' : 'bg-green-50 text-green-700 border-green-300'}>
-            {businessType === 'B2B' ? '🎯 Accounts' : '👤 Users'}
+            {businessType === 'B2B' ? '🎯 Business Accounts' : '👤 Individual Users'}
           </Badge>
         </div>
       )}
@@ -72,6 +72,9 @@ const ICPDefinitionStepV2 = ({
             <Mail className="h-4 w-4 mr-2 text-blue-600" />
             Email Type Scoring
           </CardTitle>
+          <CardDescription className="text-sm text-gray-600">
+            Assign scores based on email domain types to identify lead quality
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -129,14 +132,14 @@ const ICPDefinitionStepV2 = ({
         </CardContent>
       </Card>
 
-      {/* Fit Criteria - Coming Soon */}
+      {/* Advanced Scoring Criteria - Coming Soon */}
       <Card className="border border-gray-200 bg-gray-50">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base text-gray-600">Fit Criteria</CardTitle>
+              <CardTitle className="text-base text-gray-600">Advanced Scoring Criteria</CardTitle>
               <CardDescription className="text-sm text-gray-500">
-                Define rules with OR logic. Each property can have multiple conditions.
+                Score your leads based on various criteria such as firmographic data, behavioral activity, and engagement patterns
               </CardDescription>
             </div>
             <Badge variant="secondary" className="bg-blue-100 text-blue-700">
@@ -147,17 +150,51 @@ const ICPDefinitionStepV2 = ({
         </CardHeader>
         <CardContent className="py-12">
           <div className="text-center">
-            <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">Advanced Fit Criteria</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Define custom rules based on company size, region, funding, and more to identify your ideal customers.
+            <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-600 mb-2">Comprehensive Lead Scoring</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Create sophisticated scoring models using multiple data points to accurately identify your highest-value prospects and optimize your sales funnel.
             </p>
-            <div className="bg-white border border-gray-200 rounded-lg p-4 text-left max-w-md mx-auto">
-              <div className="space-y-2 text-xs text-gray-500">
-                <div>• Company Size: 20-200 employees</div>
-                <div>• Region: North America, Europe</div>
-                <div>• Funding Raised: $1M - $10M</div>
-                <div>• User Role: CEO, CTO, VP</div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
+                <h4 className="font-medium text-gray-700 mb-2">📊 Firmographic Scoring</h4>
+                <div className="space-y-1 text-xs text-gray-500">
+                  <div>• Company Size: 50-500 employees</div>
+                  <div>• Industry: Technology, SaaS</div>
+                  <div>• Revenue: $10M - $100M</div>
+                  <div>• Geographic Location</div>
+                </div>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
+                <h4 className="font-medium text-gray-700 mb-2">🎯 Behavioral Scoring</h4>
+                <div className="space-y-1 text-xs text-gray-500">
+                  <div>• Website Engagement Time</div>
+                  <div>• Content Download Activity</div>
+                  <div>• Email Open & Click Rates</div>
+                  <div>• Product Trial Usage</div>
+                </div>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
+                <h4 className="font-medium text-gray-700 mb-2">👥 Demographic Scoring</h4>
+                <div className="space-y-1 text-xs text-gray-500">
+                  <div>• Job Title & Seniority Level</div>
+                  <div>• Department & Function</div>
+                  <div>• Decision-Making Authority</div>
+                  <div>• Years of Experience</div>
+                </div>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
+                <h4 className="font-medium text-gray-700 mb-2">⚡ Activity Scoring</h4>
+                <div className="space-y-1 text-xs text-gray-500">
+                  <div>• Social Media Engagement</div>
+                  <div>• Event Participation</div>
+                  <div>• Webinar Attendance</div>
+                  <div>• Sales Interaction History</div>
+                </div>
               </div>
             </div>
           </div>

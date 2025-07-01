@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -97,8 +98,8 @@ const LeadQualitySetup = () => {
     },
     { 
       id: 3, 
-      title: "Define Your ICP", 
-      description: "Set your ideal customer profile",
+      title: "Set Scores For Your Leads", 
+      description: "Configure lead scoring criteria",
       isComplete: currentStep > 3,
       isValid: !!businessType && fitCriteria.length >= 0 // Email scoring is always valid
     },
@@ -191,10 +192,10 @@ const LeadQualitySetup = () => {
             Back
           </Button>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Lead Quality Setup
+            Lead Scoring Setup
           </h1>
           <p className="text-gray-600">
-            Configure your lead qualification criteria to identify high-quality prospects and optimize your sales pipeline.
+            Configure your lead scoring criteria to identify high-quality prospects and optimize your sales pipeline.
           </p>
         </div>
 
