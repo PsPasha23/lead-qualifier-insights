@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Building, Users, Activity, Target, ArrowRight, User, CheckCircle } from "lucide-react";
+import { Mail, Building, Users, Activity, Target, ArrowRight, User, CheckCircle, TrendingUp, Clock, Zap, Award } from "lucide-react";
 
 interface ScoringStep {
   id: string;
@@ -16,6 +16,7 @@ interface ScoringStep {
 const LeadScoringIllustration = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [leadVisible, setLeadVisible] = useState(false);
 
   const leadData = {
     name: 'Sarah Johnson',
@@ -60,9 +61,14 @@ const LeadScoringIllustration = () => {
     }
   ];
 
-  const finalScore = 'high'; // Based on majority of high scores
+  const finalScore = 'high';
 
   useEffect(() => {
+    // Start with lead appearing
+    const leadTimer = setTimeout(() => {
+      setLeadVisible(true);
+    }, 500);
+
     const interval = setInterval(() => {
       if (currentStep < scoringSteps.length) {
         setIsProcessing(true);
@@ -74,11 +80,16 @@ const LeadScoringIllustration = () => {
         // Reset after showing final result
         setTimeout(() => {
           setCurrentStep(0);
-        }, 3000);
+          setLeadVisible(false);
+          setTimeout(() => setLeadVisible(true), 500);
+        }, 4000);
       }
     }, 2500);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(leadTimer);
+    };
   }, [currentStep]);
 
   const getScoreColor = (score: 'high' | 'medium' | 'low') => {
@@ -103,31 +114,75 @@ const LeadScoringIllustration = () => {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center">
           <Target className="h-8 w-8 mr-3 text-blue-600" />
-          Lead Scoring Process Flow
+          Intelligent Lead Scoring in Action
         </h2>
-        <p className="text-gray-600 text-lg">Watch how a lead progresses through our intelligent scoring system</p>
+        <p className="text-gray-600 text-lg">See how raw lead data transforms into actionable sales insights</p>
       </div>
 
       {/* Process Flow */}
       <div className="space-y-6">
-        {/* Lead Input */}
-        <Card className="border-2 border-blue-200 bg-blue-50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-center space-x-4">
-              <div className="p-3 bg-blue-100 rounded-full">
-                <User className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="text-center">
-                <h3 className="text-xl font-bold text-blue-900">New Lead Enters System</h3>
-                <div className="mt-2 p-3 bg-white rounded-lg border">
-                  <p className="font-semibold text-gray-800">{leadData.name}</p>
-                  <p className="text-sm text-gray-600">{leadData.email}</p>
-                  <p className="text-sm text-gray-600">{leadData.jobTitle} at {leadData.company}</p>
+        {/* Visual Lead Entry */}
+        <div className="relative">
+          <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                {/* Lead Data Visualization */}
+                <div className="flex-1">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="relative">
+                      <div className="p-4 bg-blue-100 rounded-full">
+                        <User className="h-8 w-8 text-blue-600" />
+                      </div>
+                      {leadVisible && (
+                        <div className="absolute -top-1 -right-1 animate-bounce">
+                          <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-blue-900">New Lead Data Received</h3>
+                      <p className="text-sm text-blue-700">Real-time lead qualification starting...</p>
+                    </div>
+                  </div>
+                  
+                  {/* Raw Data Cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {leadVisible && (
+                      <>
+                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.1s'}}>
+                          <Mail className="h-4 w-4 text-gray-500 mb-1" />
+                          <p className="text-xs text-gray-600 truncate">{leadData.email}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.2s'}}>
+                          <Building className="h-4 w-4 text-gray-500 mb-1" />
+                          <p className="text-xs text-gray-600 truncate">{leadData.company}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.3s'}}>
+                          <Users className="h-4 w-4 text-gray-500 mb-1" />
+                          <p className="text-xs text-gray-600 truncate">{leadData.jobTitle}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.4s'}}>
+                          <Activity className="h-4 w-4 text-gray-500 mb-1" />
+                          <p className="text-xs text-gray-600">Active User</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* User Benefit Highlight */}
+                <div className="ml-6 p-4 bg-white rounded-lg border-2 border-green-200 shadow-sm">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Zap className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-semibold text-green-800">Instant Processing</span>
+                  </div>
+                  <p className="text-xs text-green-700">No manual review needed</p>
+                  <p className="text-xs text-green-700">Saves 15+ minutes per lead</p>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Scoring Steps */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -174,6 +229,17 @@ const LeadScoringIllustration = () => {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                       </div>
                     )}
+
+                    {/* User Benefit Tooltip */}
+                    {isCompleted && (
+                      <div className="mt-2 p-2 bg-white rounded border text-xs text-gray-600">
+                        <TrendingUp className="h-3 w-3 inline mr-1" />
+                        {index === 0 && "Email quality verified"}
+                        {index === 1 && "Company size confirmed"}
+                        {index === 2 && "Decision maker identified"}
+                        {index === 3 && "Engagement level assessed"}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -191,58 +257,92 @@ const LeadScoringIllustration = () => {
           })}
         </div>
 
-        {/* Final Result */}
+        {/* Final Result with User Benefits */}
         {currentStep >= scoringSteps.length && (
           <Card className={`border-2 overflow-hidden animate-scale-in ${
             finalScore === 'high' ? 'border-green-400' : 
             finalScore === 'medium' ? 'border-yellow-400' : 'border-red-400'
           }`}>
             <div className={`h-2 bg-gradient-to-r ${getScoreGradient(finalScore)}`}></div>
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center space-x-4 mb-4">
-                <Target className="h-8 w-8 text-gray-600" />
-                <h3 className="text-2xl font-bold text-gray-900">Final Lead Quality Score</h3>
-              </div>
-              
-              <div className="flex items-center justify-center space-x-6">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Score Result */}
                 <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-2">Lead Assessment Complete</p>
-                  <Badge className={`text-lg px-6 py-2 ${getScoreColor(finalScore)}`}>
-                    {finalScore.toUpperCase()} QUALITY LEAD
-                  </Badge>
+                  <div className="flex items-center justify-center space-x-4 mb-4">
+                    <Award className="h-8 w-8 text-green-600" />
+                    <h3 className="text-2xl font-bold text-gray-900">Lead Quality Assessment</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Badge className={`text-lg px-6 py-2 ${getScoreColor(finalScore)}`}>
+                      {finalScore.toUpperCase()} QUALITY LEAD
+                    </Badge>
+                    
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                      <p className="text-sm font-medium text-green-800 mb-1">Recommended Action</p>
+                      <p className="text-sm text-green-700">Priority follow-up within 24 hours</p>
+                      <p className="text-xs text-green-600 mt-1">85% likelihood of conversion</p>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Recommended Action</p>
-                  <p className="text-xs text-gray-600">
-                    {finalScore === 'high' ? 'Priority follow-up within 24h' :
-                     finalScore === 'medium' ? 'Schedule follow-up within 3 days' :
-                     'Add to nurture campaign'}
-                  </p>
+
+                {/* User Benefits */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">What This Means for You:</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                      <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-blue-900">Time Saved</p>
+                        <p className="text-xs text-blue-700">15 minutes of manual qualification avoided</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-green-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-green-900">Higher Conversion</p>
+                        <p className="text-xs text-green-700">Focus on leads 3x more likely to buy</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+                      <Target className="h-5 w-5 text-purple-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-purple-900">Better Prioritization</p>
+                        <p className="text-xs text-purple-700">Never miss a high-value opportunity</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Process Benefits */}
+        {/* Process Benefits Summary */}
         <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
           <CardContent className="p-6">
             <h4 className="text-xl font-bold mb-4 text-center">
-              Automated Lead Scoring Benefits
+              Your Lead Scoring ROI
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold">85%</div>
-                <p className="text-sm opacity-90">More Accurate Prioritization</p>
+                <div className="text-2xl font-bold">5x</div>
+                <p className="text-sm opacity-90">Faster Lead Processing</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">60%</div>
-                <p className="text-sm opacity-90">Faster Lead Qualification</p>
+                <div className="text-2xl font-bold">85%</div>
+                <p className="text-sm opacity-90">More Accurate Scoring</p>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">40%</div>
-                <p className="text-sm opacity-90">Higher Conversion Rates</p>
+                <p className="text-sm opacity-90">Higher Conversion Rate</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">60%</div>
+                <p className="text-sm opacity-90">Time Savings</p>
               </div>
             </div>
           </CardContent>
