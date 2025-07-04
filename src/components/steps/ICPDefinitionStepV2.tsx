@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight, Mail, Target, HelpCircle, Clock, TrendingUp } from "lucide-react";
+import { ChevronDown, ChevronRight, Mail, Target, HelpCircle, TrendingUp } from "lucide-react";
 import { EmailScoring, FilterData } from "../../pages/LeadQualitySetup";
+import LeadScoringIllustration from "../LeadScoringIllustration";
 
 interface ICPDefinitionStepV2Props {
   businessType: 'B2B' | 'B2C' | null;
@@ -132,72 +133,16 @@ const ICPDefinitionStepV2 = ({
         </CardContent>
       </Card>
 
-      {/* Advanced Scoring Criteria - Coming Soon */}
-      <Card className="border border-gray-200 bg-gray-50">
+      {/* Lead Scoring Illustration */}
+      <Card className="border border-gray-200">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-base text-gray-600">Advanced Scoring Criteria</CardTitle>
-              <CardDescription className="text-sm text-gray-500">
-                Score your leads based on various criteria such as firmographic data, behavioral activity, and engagement patterns
-              </CardDescription>
-            </div>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-              <Clock className="h-3 w-3 mr-1" />
-              Coming Soon
-            </Badge>
-          </div>
+          <CardTitle className="text-base text-gray-800">Advanced Lead Scoring Preview</CardTitle>
+          <CardDescription className="text-sm text-gray-600">
+            See how comprehensive lead scoring works across multiple criteria
+          </CardDescription>
         </CardHeader>
-        <CardContent className="py-12">
-          <div className="text-center">
-            <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">Comprehensive Lead Scoring</h3>
-            <p className="text-sm text-gray-500 mb-6">
-              Create sophisticated scoring models using multiple data points to accurately identify your highest-value prospects and optimize your sales funnel.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
-                <h4 className="font-medium text-gray-700 mb-2">📊 Firmographic Scoring</h4>
-                <div className="space-y-1 text-xs text-gray-500">
-                  <div>• Company Size: 50-500 employees</div>
-                  <div>• Industry: Technology, SaaS</div>
-                  <div>• Revenue: $10M - $100M</div>
-                  <div>• Geographic Location</div>
-                </div>
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
-                <h4 className="font-medium text-gray-700 mb-2">🎯 Behavioral Scoring</h4>
-                <div className="space-y-1 text-xs text-gray-500">
-                  <div>• Website Engagement Time</div>
-                  <div>• Content Download Activity</div>
-                  <div>• Email Open & Click Rates</div>
-                  <div>• Product Trial Usage</div>
-                </div>
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
-                <h4 className="font-medium text-gray-700 mb-2">👥 Demographic Scoring</h4>
-                <div className="space-y-1 text-xs text-gray-500">
-                  <div>• Job Title & Seniority Level</div>
-                  <div>• Department & Function</div>
-                  <div>• Decision-Making Authority</div>
-                  <div>• Years of Experience</div>
-                </div>
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg p-4 text-left">
-                <h4 className="font-medium text-gray-700 mb-2">⚡ Activity Scoring</h4>
-                <div className="space-y-1 text-xs text-gray-500">
-                  <div>• Social Media Engagement</div>
-                  <div>• Event Participation</div>
-                  <div>• Webinar Attendance</div>
-                  <div>• Sales Interaction History</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <CardContent className="p-6">
+          <LeadScoringIllustration />
         </CardContent>
       </Card>
     </div>
