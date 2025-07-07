@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +30,7 @@ const LeadScoringIllustration = () => {
   const scoringSteps: ScoringStep[] = [
     {
       id: 'email',
-      title: 'Email Domain Analysis',
+      title: 'Email Domain',
       icon: Mail,
       description: 'Corporate email detected',
       score: 'high',
@@ -45,7 +46,7 @@ const LeadScoringIllustration = () => {
     },
     {
       id: 'demographics',
-      title: 'Job Role & Seniority',
+      title: 'Job Role',
       icon: Users,
       description: 'Senior marketing executive',
       score: 'high',
@@ -53,7 +54,7 @@ const LeadScoringIllustration = () => {
     },
     {
       id: 'activity',
-      title: 'Engagement Score',
+      title: 'Engagement',
       icon: Activity,
       description: 'Active user, multiple touchpoints',
       score: 'medium',
@@ -80,7 +81,7 @@ const LeadScoringIllustration = () => {
         setTimeout(() => {
           setCurrentStep(prev => prev + 1);
           setIsProcessing(false);
-        }, 1000);
+        }, 800);
       } else {
         // Reset after showing final result
         setTimeout(() => {
@@ -92,9 +93,9 @@ const LeadScoringIllustration = () => {
             setLeadVisible(true);
             setLeadEntering(false);
           }, 1000);
-        }, 4000);
+        }, 3000);
       }
-    }, 2500);
+    }, 2000);
 
     return () => {
       clearInterval(interval);
@@ -120,35 +121,35 @@ const LeadScoringIllustration = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center">
-          <Target className="h-8 w-8 mr-3 text-blue-600" />
-          Intelligent Lead Scoring in Action
+    <div className="w-full h-full max-w-4xl mx-auto p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl overflow-hidden">
+      {/* Header - Compact */}
+      <div className="text-center mb-4">
+        <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center justify-center">
+          <Target className="h-5 w-5 mr-2 text-blue-600" />
+          Intelligent Lead Scoring
         </h2>
-        <p className="text-gray-600 text-lg">See how raw lead data transforms into actionable sales insights</p>
+        <p className="text-gray-600 text-xs">See how raw lead data transforms into actionable insights</p>
       </div>
 
-      {/* Process Flow */}
-      <div className="space-y-6">
-        {/* Visual Lead Entry System */}
+      {/* Process Flow - Compact */}
+      <div className="space-y-3 h-full overflow-hidden">
+        {/* Visual Lead Entry System - Compact */}
         <div className="relative">
-          <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 overflow-hidden">
-            <CardContent className="p-6">
+          <Card className="border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 overflow-hidden">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
-                {/* Lead Entry Visualization */}
+                {/* Lead Entry Visualization - Compact */}
                 <div className="flex-1">
-                  {/* Visual System Entry Point */}
-                  <div className="relative mb-6">
-                    <div className="flex items-center justify-center space-x-8">
-                      {/* Lead Visual Representation - On the left */}
+                  {/* Visual System Entry Point - Compact */}
+                  <div className="relative mb-3">
+                    <div className="flex items-center justify-center space-x-4">
+                      {/* Lead Visual Representation */}
                       <div className="relative">
                         {/* Lead entering animation */}
                         {leadEntering && (
-                          <div className="absolute -left-20 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
-                            <div className="flex items-center space-x-2 p-2 bg-white rounded-full border-2 border-green-400 shadow-lg">
-                              <UserPlus className="h-4 w-4 text-green-600" />
+                          <div className="absolute -left-16 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
+                            <div className="flex items-center space-x-1 p-1 bg-white rounded-full border border-green-400 shadow-md">
+                              <UserPlus className="h-3 w-3 text-green-600" />
                               <span className="text-xs font-medium text-green-700">New Lead</span>
                             </div>
                           </div>
@@ -158,14 +159,14 @@ const LeadScoringIllustration = () => {
                         <div className={`transition-all duration-500 ${
                           leadVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                         }`}>
-                          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-full border-2 border-green-300 relative">
-                            <User className="h-8 w-8 text-green-600" />
+                          <div className="p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-full border border-green-300 relative">
+                            <User className="h-5 w-5 text-green-600" />
                             
                             {/* Success indicator */}
                             {leadVisible && (
                               <div className="absolute -top-1 -right-1 animate-bounce">
-                                <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                                  <CheckCircle className="h-2 w-2 text-white" />
+                                <div className="w-3 h-3 bg-green-500 rounded-full border border-white flex items-center justify-center">
+                                  <CheckCircle className="h-1.5 w-1.5 text-white" />
                                 </div>
                               </div>
                             )}
@@ -175,78 +176,78 @@ const LeadScoringIllustration = () => {
 
                       {/* Entry Animation Arrow */}
                       <div className="flex items-center">
-                        <ArrowRight className={`h-6 w-6 text-blue-500 transition-all duration-500 ${
+                        <ArrowRight className={`h-4 w-4 text-blue-500 transition-all duration-500 ${
                           leadEntering ? 'animate-pulse text-green-500' : ''
                         }`} />
                       </div>
 
-                      {/* System/Website Visual - On the right */}
+                      {/* System/Website Visual */}
                       <div className="relative">
-                        <div className="w-24 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg border-2 border-blue-300 flex items-center justify-center">
-                          <div className="text-xs font-semibold text-blue-700">YOUR SYSTEM</div>
+                        <div className="w-16 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded border border-blue-300 flex items-center justify-center">
+                          <div className="text-xs font-semibold text-blue-700">SYSTEM</div>
                         </div>
                         
                         {/* Entry Door/Portal */}
-                        <div className="absolute -left-2 top-1/2 transform -translate-y-1/2">
-                          <div className="w-4 h-8 bg-blue-400 rounded-l-lg border-2 border-blue-500 flex items-center justify-center">
-                            <ArrowRight className="h-3 w-3 text-white" />
+                        <div className="absolute -left-1 top-1/2 transform -translate-y-1/2">
+                          <div className="w-2 h-6 bg-blue-400 rounded-l border border-blue-500 flex items-center justify-center">
+                            <ArrowRight className="h-2 w-2 text-white" />
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Entry Process Description */}
-                    <div className="text-center mt-4">
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    <div className="text-center mt-2">
+                      <div className="flex items-center justify-center space-x-1">
+                        <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
                           leadEntering ? 'bg-yellow-400 animate-pulse' : leadVisible ? 'bg-green-400' : 'bg-gray-300'
                         }`}></div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-xs font-medium text-gray-700">
                           {leadEntering ? 'Lead Entering...' : leadVisible ? 'Lead Captured' : 'Waiting for Lead'}
                         </span>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Raw Data Cards - Now showing after entry */}
+                  {/* Raw Data Cards - Compact */}
                   {leadVisible && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.1s'}}>
-                        <Mail className="h-4 w-4 text-gray-500 mb-1" />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="p-2 bg-white rounded border shadow-sm animate-fade-in" style={{animationDelay: '0.1s'}}>
+                        <Mail className="h-3 w-3 text-gray-500 mb-1" />
                         <p className="text-xs text-gray-600 truncate">{leadData.email}</p>
                       </div>
-                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.2s'}}>
-                        <Building className="h-4 w-4 text-gray-500 mb-1" />
+                      <div className="p-2 bg-white rounded border shadow-sm animate-fade-in" style={{animationDelay: '0.2s'}}>
+                        <Building className="h-3 w-3 text-gray-500 mb-1" />
                         <p className="text-xs text-gray-600 truncate">{leadData.company}</p>
                       </div>
-                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.3s'}}>
-                        <Users className="h-4 w-4 text-gray-500 mb-1" />
+                      <div className="p-2 bg-white rounded border shadow-sm animate-fade-in" style={{animationDelay: '0.3s'}}>
+                        <Users className="h-3 w-3 text-gray-500 mb-1" />
                         <p className="text-xs text-gray-600 truncate">{leadData.jobTitle}</p>
                       </div>
-                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.4s'}}>
-                        <Activity className="h-4 w-4 text-gray-500 mb-1" />
+                      <div className="p-2 bg-white rounded border shadow-sm animate-fade-in" style={{animationDelay: '0.4s'}}>
+                        <Activity className="h-3 w-3 text-gray-500 mb-1" />
                         <p className="text-xs text-gray-600">Active User</p>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* User Benefit Highlight */}
-                <div className="ml-6 p-4 bg-white rounded-lg border-2 border-green-200 shadow-sm">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Zap className="h-5 w-5 text-green-600" />
-                    <span className="text-sm font-semibold text-green-800">Instant Processing</span>
+                {/* User Benefit Highlight - Compact */}
+                <div className="ml-3 p-2 bg-white rounded border border-green-200 shadow-sm">
+                  <div className="flex items-center space-x-1 mb-1">
+                    <Zap className="h-3 w-3 text-green-600" />
+                    <span className="text-xs font-semibold text-green-800">Instant Processing</span>
                   </div>
-                  <p className="text-xs text-green-700">No manual review needed</p>
-                  <p className="text-xs text-green-700">Saves 15+ minutes per lead</p>
+                  <p className="text-xs text-green-700">No manual review</p>
+                  <p className="text-xs text-green-700">Saves 15+ minutes</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Scoring Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Scoring Steps - Compact Grid */}
+        <div className="grid grid-cols-2 gap-2">
           {scoringSteps.map((step, index) => {
             const Icon = step.icon;
             const isActive = currentStep === index;
@@ -254,156 +255,95 @@ const LeadScoringIllustration = () => {
             const isProcessingStep = isActive && isProcessing;
 
             return (
-              <div key={step.id} className="relative">
-                <Card 
-                  className={`transition-all duration-500 transform ${
-                    isActive ? 'scale-105 shadow-lg border-blue-400 bg-blue-50' : 
-                    isCompleted ? 'border-green-300 bg-green-50' : 
-                    'border-gray-200 bg-white opacity-70'
-                  }`}
-                >
-                  <CardContent className="p-4 text-center">
-                    <div className={`p-3 rounded-full mx-auto mb-3 w-fit ${
-                      isCompleted ? 'bg-green-100' : 
-                      isActive ? 'bg-blue-100' : 'bg-gray-100'
-                    }`}>
-                      {isCompleted ? (
-                        <CheckCircle className="h-6 w-6 text-green-600" />
-                      ) : (
-                        <Icon className={`h-6 w-6 ${
-                          isActive ? 'text-blue-600' : 'text-gray-400'
-                        }`} />
-                      )}
-                    </div>
-                    
-                    <h4 className="font-semibold text-gray-900 mb-2">{step.title}</h4>
-                    <p className="text-xs text-gray-600 mb-3">{step.description}</p>
-                    
-                    {(isCompleted || (isActive && !isProcessingStep)) && (
-                      <Badge className={`${getScoreColor(step.score)} animate-fade-in`}>
-                        {step.score.toUpperCase()}
-                      </Badge>
+              <Card 
+                key={step.id}
+                className={`transition-all duration-500 transform ${
+                  isActive ? 'scale-105 shadow-md border-blue-400 bg-blue-50' : 
+                  isCompleted ? 'border-green-300 bg-green-50' : 
+                  'border-gray-200 bg-white opacity-70'
+                }`}
+              >
+                <CardContent className="p-2 text-center">
+                  <div className={`p-2 rounded-full mx-auto mb-2 w-fit ${
+                    isCompleted ? 'bg-green-100' : 
+                    isActive ? 'bg-blue-100' : 'bg-gray-100'
+                  }`}>
+                    {isCompleted ? (
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <Icon className={`h-4 w-4 ${
+                        isActive ? 'text-blue-600' : 'text-gray-400'
+                      }`} />
                     )}
-                    
-                    {isProcessingStep && (
-                      <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                      </div>
-                    )}
-
-                    {/* User Benefit Tooltip */}
-                    {isCompleted && (
-                      <div className="mt-2 p-2 bg-white rounded border text-xs text-gray-600">
-                        <TrendingUp className="h-3 w-3 inline mr-1" />
-                        {index === 0 && "Email quality verified"}
-                        {index === 1 && "Company size confirmed"}
-                        {index === 2 && "Decision maker identified"}
-                        {index === 3 && "Engagement level assessed"}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Arrow between steps */}
-                {index < scoringSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-10">
-                    <ArrowRight className={`h-6 w-6 ${
-                      currentStep > index ? 'text-green-500' : 
-                      currentStep === index ? 'text-blue-500' : 'text-gray-300'
-                    }`} />
                   </div>
-                )}
-              </div>
+                  
+                  <h4 className="font-semibold text-xs text-gray-900 mb-1">{step.title}</h4>
+                  <p className="text-xs text-gray-600 mb-2">{step.description}</p>
+                  
+                  {(isCompleted || (isActive && !isProcessingStep)) && (
+                    <Badge className={`${getScoreColor(step.score)} text-xs animate-fade-in`}>
+                      {step.score.toUpperCase()}
+                    </Badge>
+                  )}
+                  
+                  {isProcessingStep && (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             );
           })}
         </div>
 
-        {/* Final Result with User Benefits */}
+        {/* Final Result - Compact */}
         {currentStep >= scoringSteps.length && (
           <Card className={`border-2 overflow-hidden animate-scale-in ${
             finalScore === 'high' ? 'border-green-400' : 
             finalScore === 'medium' ? 'border-yellow-400' : 'border-red-400'
           }`}>
-            <div className={`h-2 bg-gradient-to-r ${getScoreGradient(finalScore)}`}></div>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Score Result */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center space-x-4 mb-4">
-                    <Award className="h-8 w-8 text-green-600" />
-                    <h3 className="text-2xl font-bold text-gray-900">Lead Quality Assessment</h3>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <Badge className={`text-lg px-6 py-2 ${getScoreColor(finalScore)}`}>
-                      {finalScore.toUpperCase()} QUALITY LEAD
-                    </Badge>
-                    
-                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                      <p className="text-sm font-medium text-green-800 mb-1">Recommended Action</p>
-                      <p className="text-sm text-green-700">Priority follow-up within 24 hours</p>
-                      <p className="text-xs text-green-600 mt-1">85% likelihood of conversion</p>
-                    </div>
-                  </div>
+            <div className={`h-1 bg-gradient-to-r ${getScoreGradient(finalScore)}`}></div>
+            <CardContent className="p-3">
+              <div className="text-center">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Award className="h-5 w-5 text-green-600" />
+                  <h3 className="text-sm font-bold text-gray-900">Lead Quality Assessment</h3>
                 </div>
-
-                {/* User Benefits */}
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">What This Means for You:</h4>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                      <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-blue-900">Time Saved</p>
-                        <p className="text-xs text-blue-700">15 minutes of manual qualification avoided</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                      <TrendingUp className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-green-900">Higher Conversion</p>
-                        <p className="text-xs text-green-700">Focus on leads 3x more likely to buy</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
-                      <Target className="h-5 w-5 text-purple-600 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-purple-900">Better Prioritization</p>
-                        <p className="text-xs text-purple-700">Never miss a high-value opportunity</p>
-                      </div>
-                    </div>
-                  </div>
+                
+                <Badge className={`text-sm px-3 py-1 mb-2 ${getScoreColor(finalScore)}`}>
+                  {finalScore.toUpperCase()} QUALITY LEAD
+                </Badge>
+                
+                <div className="p-2 bg-green-50 rounded border border-green-200">
+                  <p className="text-xs font-medium text-green-800">Priority follow-up within 24 hours</p>
+                  <p className="text-xs text-green-600">85% likelihood of conversion</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Process Benefits Summary */}
+        {/* ROI Summary - Compact */}
         <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-          <CardContent className="p-6">
-            <h4 className="text-xl font-bold mb-4 text-center">
-              Your Lead Scoring ROI
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <CardContent className="p-3">
+            <h4 className="text-sm font-bold mb-2 text-center">Your Lead Scoring ROI</h4>
+            <div className="grid grid-cols-4 gap-2">
               <div className="text-center">
-                <div className="text-2xl font-bold">5x</div>
-                <p className="text-sm opacity-90">Faster Lead Processing</p>
+                <div className="text-lg font-bold">5x</div>
+                <p className="text-xs opacity-90">Faster</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">85%</div>
-                <p className="text-sm opacity-90">More Accurate Scoring</p>
+                <div className="text-lg font-bold">85%</div>
+                <p className="text-xs opacity-90">Accurate</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">40%</div>
-                <p className="text-sm opacity-90">Higher Conversion Rate</p>
+                <div className="text-lg font-bold">40%</div>
+                <p className="text-xs opacity-90">Higher Conv.</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">60%</div>
-                <p className="text-sm opacity-90">Time Savings</p>
+                <div className="text-lg font-bold">60%</div>
+                <p className="text-xs opacity-90">Time Saved</p>
               </div>
             </div>
           </CardContent>
