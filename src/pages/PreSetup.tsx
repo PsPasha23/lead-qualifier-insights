@@ -3,8 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Settings, Eye, CheckCircle, ArrowRight, Target, Zap, TrendingUp, Users, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Settings, Eye, CheckCircle, ArrowRight, Target, Zap, TrendingUp, Users, Star } from "lucide-react";
 import LeadScoringIllustration from "@/components/LeadScoringIllustration";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +19,6 @@ interface Step {
 const PreSetup = () => {
   const navigate = useNavigate();
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
-  const [isIllustrationCollapsed, setIsIllustrationCollapsed] = useState(false);
 
   // Simulate setup status - you can modify these to test different states
   const [marketingAnalyticsComplete, setMarketingAnalyticsComplete] = useState(false);
@@ -72,10 +70,6 @@ const PreSetup = () => {
     console.log(`Setting up step ${stepNumber}`);
   };
 
-  const handleAnimationComplete = () => {
-    setIsIllustrationCollapsed(true);
-  };
-
   return (
     <div className="h-screen bg-gray-50 overflow-hidden">
       <div className="container mx-auto px-6 py-4 h-full flex flex-col">
@@ -104,37 +98,20 @@ const PreSetup = () => {
           </div>
         </div>
 
-        {/* Horizontal Illustration - Collapsible */}
-        <Collapsible open={!isIllustrationCollapsed} onOpenChange={setIsIllustrationCollapsed}>
-          <div className="mb-4">
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 p-2 h-auto"
-              >
-                <Target className="h-4 w-4 text-blue-600" />
-                <span>Lead Scoring Preview</span>
-                {isIllustrationCollapsed ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronUp className="h-4 w-4" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2">
-              <Card className="border border-gray-200 bg-white shadow-sm">
-                <CardContent className="p-4">
-                  <div className="h-48 overflow-hidden">
-                    <LeadScoringIllustration 
-                      horizontal={true} 
-                      onAnimationComplete={handleAnimationComplete}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </CollapsibleContent>
+        {/* Horizontal Illustration - Static after animation */}
+        <div className="mb-4">
+          <div className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
+            <Target className="h-4 w-4 text-blue-600" />
+            <span>Lead Scoring Preview</span>
           </div>
-        </Collapsible>
+          <Card className="border border-gray-200 bg-white shadow-sm">
+            <CardContent className="p-4">
+              <div className="h-48 overflow-hidden">
+                <LeadScoringIllustration horizontal={true} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Setup Steps - Full width */}
         <div className="space-y-3 flex-1 overflow-y-auto">
