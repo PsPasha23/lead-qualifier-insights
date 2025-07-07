@@ -142,11 +142,11 @@ const LeadScoringIllustration = () => {
                   {/* Visual System Entry Point */}
                   <div className="relative mb-6">
                     <div className="flex items-center justify-center space-x-8">
-                      {/* Lead Visual Representation - Now on the left */}
+                      {/* Lead Visual Representation - On the left */}
                       <div className="relative">
                         {/* Lead entering animation */}
                         {leadEntering && (
-                          <div className="absolute -right-20 top-1/2 transform -translate-y-1/2 animate-slide-in-left">
+                          <div className="absolute -left-20 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
                             <div className="flex items-center space-x-2 p-2 bg-white rounded-full border-2 border-green-400 shadow-lg">
                               <UserPlus className="h-4 w-4 text-green-600" />
                               <span className="text-xs font-medium text-green-700">New Lead</span>
@@ -180,7 +180,7 @@ const LeadScoringIllustration = () => {
                         }`} />
                       </div>
 
-                      {/* System/Website Visual - Now on the right */}
+                      {/* System/Website Visual - On the right */}
                       <div className="relative">
                         <div className="w-24 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg border-2 border-blue-300 flex items-center justify-center">
                           <div className="text-xs font-semibold text-blue-700">YOUR SYSTEM</div>
