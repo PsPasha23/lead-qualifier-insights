@@ -100,16 +100,7 @@ const PreSetup = () => {
 
         {/* Main Content - Two Column Layout */}
         <div className="flex gap-6 flex-1 overflow-hidden">
-          {/* Left Column - Illustration */}
-          <div className="w-1/2 flex flex-col">
-            <Card className="border border-gray-200 bg-white shadow-sm flex-1">
-              <CardContent className="p-4 h-full">
-                <LeadScoringIllustration />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Setup Steps */}
+          {/* Left Column - Setup Steps */}
           <div className="w-1/2 flex flex-col space-y-3 overflow-y-auto">
             {steps.map((step) => {
               const Icon = step.icon;
@@ -248,6 +239,15 @@ const PreSetup = () => {
                     <p className="text-xs text-green-700">Time Saved</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Illustration */}
+          <div className="w-1/2 flex flex-col">
+            <Card className="border border-gray-200 bg-white shadow-sm flex-1">
+              <CardContent className="p-4 h-full">
+                <LeadScoringIllustration />
               </CardContent>
             </Card>
           </div>
