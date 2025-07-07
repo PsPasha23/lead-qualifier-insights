@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Building, Users, Activity, Target, ArrowRight, User, CheckCircle, TrendingUp, Clock, Zap, Award } from "lucide-react";
+import { Mail, Building, Users, Activity, Target, ArrowRight, User, CheckCircle, TrendingUp, Clock, Zap, Award, ArrowDown, UserPlus } from "lucide-react";
 
 interface ScoringStep {
   id: string;
@@ -17,6 +17,7 @@ const LeadScoringIllustration = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [leadVisible, setLeadVisible] = useState(false);
+  const [leadEntering, setLeadEntering] = useState(false);
 
   const leadData = {
     name: 'Sarah Johnson',
@@ -64,10 +65,15 @@ const LeadScoringIllustration = () => {
   const finalScore = 'high';
 
   useEffect(() => {
-    // Start with lead appearing
+    // Start with lead entering animation
+    const leadEnterTimer = setTimeout(() => {
+      setLeadEntering(true);
+    }, 200);
+
     const leadTimer = setTimeout(() => {
       setLeadVisible(true);
-    }, 500);
+      setLeadEntering(false);
+    }, 1200);
 
     const interval = setInterval(() => {
       if (currentStep < scoringSteps.length) {
@@ -81,7 +87,12 @@ const LeadScoringIllustration = () => {
         setTimeout(() => {
           setCurrentStep(0);
           setLeadVisible(false);
-          setTimeout(() => setLeadVisible(true), 500);
+          setLeadEntering(false);
+          setTimeout(() => setLeadEntering(true), 200);
+          setTimeout(() => {
+            setLeadVisible(true);
+            setLeadEntering(false);
+          }, 1000);
         }, 4000);
       }
     }, 2500);
@@ -89,6 +100,7 @@ const LeadScoringIllustration = () => {
     return () => {
       clearInterval(interval);
       clearTimeout(leadTimer);
+      clearTimeout(leadEnterTimer);
     };
   }, [currentStep]);
 
@@ -121,53 +133,103 @@ const LeadScoringIllustration = () => {
 
       {/* Process Flow */}
       <div className="space-y-6">
-        {/* Visual Lead Entry */}
+        {/* Visual Lead Entry System */}
         <div className="relative">
           <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                {/* Lead Data Visualization */}
+                {/* Lead Entry Visualization */}
                 <div className="flex-1">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="relative">
-                      <div className="p-4 bg-blue-100 rounded-full">
-                        <User className="h-8 w-8 text-blue-600" />
-                      </div>
-                      {leadVisible && (
-                        <div className="absolute -top-1 -right-1 animate-bounce">
-                          <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                  {/* Visual System Entry Point */}
+                  <div className="relative mb-6">
+                    <div className="flex items-center justify-center space-x-8">
+                      {/* System/Website Visual */}
+                      <div className="relative">
+                        <div className="w-24 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg border-2 border-blue-300 flex items-center justify-center">
+                          <div className="text-xs font-semibold text-blue-700">YOUR SYSTEM</div>
                         </div>
-                      )}
+                        
+                        {/* Entry Door/Portal */}
+                        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2">
+                          <div className="w-4 h-8 bg-blue-400 rounded-r-lg border-2 border-blue-500 flex items-center justify-center">
+                            <ArrowRight className="h-3 w-3 text-white" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Entry Animation Arrow */}
+                      <div className="flex items-center">
+                        <ArrowRight className={`h-6 w-6 text-blue-500 transition-all duration-500 ${
+                          leadEntering ? 'animate-pulse text-green-500' : ''
+                        }`} />
+                      </div>
+
+                      {/* Lead Visual Representation */}
+                      <div className="relative">
+                        {/* Lead entering animation */}
+                        {leadEntering && (
+                          <div className="absolute -left-20 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
+                            <div className="flex items-center space-x-2 p-2 bg-white rounded-full border-2 border-green-400 shadow-lg">
+                              <UserPlus className="h-4 w-4 text-green-600" />
+                              <span className="text-xs font-medium text-green-700">New Lead</span>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Settled lead representation */}
+                        <div className={`transition-all duration-500 ${
+                          leadVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                        }`}>
+                          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-full border-2 border-green-300 relative">
+                            <User className="h-8 w-8 text-green-600" />
+                            
+                            {/* Success indicator */}
+                            {leadVisible && (
+                              <div className="absolute -top-1 -right-1 animate-bounce">
+                                <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                                  <CheckCircle className="h-2 w-2 text-white" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-blue-900">New Lead Data Received</h3>
-                      <p className="text-sm text-blue-700">Real-time lead qualification starting...</p>
+
+                    {/* Entry Process Description */}
+                    <div className="text-center mt-4">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                          leadEntering ? 'bg-yellow-400 animate-pulse' : leadVisible ? 'bg-green-400' : 'bg-gray-300'
+                        }`}></div>
+                        <span className="text-sm font-medium text-gray-700">
+                          {leadEntering ? 'Lead Entering...' : leadVisible ? 'Lead Captured' : 'Waiting for Lead'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* Raw Data Cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {leadVisible && (
-                      <>
-                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.1s'}}>
-                          <Mail className="h-4 w-4 text-gray-500 mb-1" />
-                          <p className="text-xs text-gray-600 truncate">{leadData.email}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.2s'}}>
-                          <Building className="h-4 w-4 text-gray-500 mb-1" />
-                          <p className="text-xs text-gray-600 truncate">{leadData.company}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.3s'}}>
-                          <Users className="h-4 w-4 text-gray-500 mb-1" />
-                          <p className="text-xs text-gray-600 truncate">{leadData.jobTitle}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.4s'}}>
-                          <Activity className="h-4 w-4 text-gray-500 mb-1" />
-                          <p className="text-xs text-gray-600">Active User</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  {/* Raw Data Cards - Now showing after entry */}
+                  {leadVisible && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.1s'}}>
+                        <Mail className="h-4 w-4 text-gray-500 mb-1" />
+                        <p className="text-xs text-gray-600 truncate">{leadData.email}</p>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.2s'}}>
+                        <Building className="h-4 w-4 text-gray-500 mb-1" />
+                        <p className="text-xs text-gray-600 truncate">{leadData.company}</p>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.3s'}}>
+                        <Users className="h-4 w-4 text-gray-500 mb-1" />
+                        <p className="text-xs text-gray-600 truncate">{leadData.jobTitle}</p>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg border shadow-sm animate-fade-in" style={{animationDelay: '0.4s'}}>
+                        <Activity className="h-4 w-4 text-gray-500 mb-1" />
+                        <p className="text-xs text-gray-600">Active User</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* User Benefit Highlight */}
