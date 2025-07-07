@@ -155,21 +155,40 @@ const LeadScoringIllustration = () => {
                           </div>
                         )}
                         
-                        {/* Settled lead representation */}
+                        {/* Settled lead representation - Fixed green box */}
                         <div className={`transition-all duration-500 ${
                           leadVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                         }`}>
-                          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-full border-2 border-green-300 relative">
-                            <User className="h-8 w-8 text-green-600" />
+                          <div className="relative p-6 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl border-2 border-green-400 shadow-lg">
+                            {/* Main user icon */}
+                            <div className="flex items-center justify-center mb-3">
+                              <div className="p-3 bg-green-500 rounded-full shadow-md">
+                                <User className="h-8 w-8 text-white" />
+                              </div>
+                            </div>
+                            
+                            {/* Lead info */}
+                            <div className="text-center space-y-1">
+                              <div className="text-sm font-semibold text-green-900">Sarah Johnson</div>
+                              <div className="text-xs text-green-700">VP of Marketing</div>
+                              <div className="text-xs text-green-600">TechCorp Inc.</div>
+                            </div>
                             
                             {/* Success indicator */}
                             {leadVisible && (
-                              <div className="absolute -top-1 -right-1 animate-bounce">
-                                <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                                  <CheckCircle className="h-2 w-2 text-white" />
+                              <div className="absolute -top-2 -right-2 animate-bounce">
+                                <div className="w-6 h-6 bg-green-500 rounded-full border-3 border-white flex items-center justify-center shadow-lg">
+                                  <CheckCircle className="h-3 w-3 text-white" />
                                 </div>
                               </div>
                             )}
+                            
+                            {/* Quality indicator */}
+                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                              <Badge className="bg-green-600 text-white text-xs px-2 py-1 shadow-md">
+                                Quality Lead
+                              </Badge>
+                            </div>
                           </div>
                         </div>
                       </div>
