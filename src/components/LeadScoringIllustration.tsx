@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,11 +12,17 @@ interface ScoringStep {
   color: string;
 }
 
-const LeadScoringIllustration = () => {
+interface LeadScoringIllustrationProps {
+  horizontal?: boolean;
+  onAnimationComplete?: () => void;
+}
+
+const LeadScoringIllustration = ({ horizontal = false, onAnimationComplete }: LeadScoringIllustrationProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [leadVisible, setLeadVisible] = useState(false);
   const [leadEntering, setLeadEntering] = useState(false);
+  const [animationCycleComplete, setAnimationCycleComplete] = useState(false);
 
   const leadData = {
     name: 'Sarah Johnson',
@@ -83,6 +88,10 @@ const LeadScoringIllustration = () => {
           setIsProcessing(false);
         }, 800);
       } else {
+        if (!animationCycleComplete) {
+          setAnimationCycleComplete(true);
+          onAnimationComplete?.();
+        }
         // Reset after showing final result
         setTimeout(() => {
           setCurrentStep(0);
@@ -102,7 +111,7 @@ const LeadScoringIllustration = () => {
       clearTimeout(leadTimer);
       clearTimeout(leadEnterTimer);
     };
-  }, [currentStep]);
+  }, [currentStep, animationCycleComplete, onAnimationComplete]);
 
   const getScoreColor = (score: 'high' | 'medium' | 'low') => {
     switch (score) {
@@ -119,6 +128,115 @@ const LeadScoringIllustration = () => {
       case 'low': return 'from-red-400 to-red-600';
     }
   };
+
+  if (horizontal) {
+    return (
+      <div className="w-full h-full bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-lg p-3">
+        <div className="flex items-center space-x-4 h-full">
+          {/* Lead Entry */}
+          <div className="flex-shrink-0">
+            <div className="relative">
+              {leadEntering && (
+                <div className="absolute -left-12 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
+                  <div className="flex items-center space-x-1 p-1 bg-white rounded-full border border-green-400 shadow-md">
+                    <UserPlus className="h-2 w-2 text-green-600" />
+                    <span className="text-xs font-medium text-green-700">New Lead</span>
+                  </div>
+                </div>
+              )}
+              
+              <div className={`transition-all duration-500 ${
+                leadVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              }`}>
+                <div className="p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-full border border-green-300 relative">
+                  <User className="h-4 w-4 text-green-600" />
+                  {leadVisible && (
+                    <div className="absolute -top-1 -right-1 animate-bounce">
+                      <div className="w-2 h-2 bg-green-500 rounded-full border border-white"></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ArrowRight className="h-3 w-3 text-blue-500 flex-shrink-0" />
+
+          {/* Processing Steps */}
+          <div className="flex items-center space-x-2 flex-1 overflow-hidden">
+            {scoringSteps.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = currentStep === index;
+              const isCompleted = currentStep > index;
+              const isProcessingStep = isActive && isProcessing;
+
+              return (
+                <div key={step.id} className="flex-shrink-0">
+                  <div className={`p-2 rounded-lg border transition-all duration-300 ${
+                    isActive ? 'border-blue-400 bg-blue-50' : 
+                    isCompleted ? 'border-green-300 bg-green-50' : 
+                    'border-gray-200 bg-white opacity-70'
+                  }`}>
+                    <div className="text-center">
+                      <div className={`p-1 rounded-full mx-auto mb-1 w-fit ${
+                        isCompleted ? 'bg-green-100' : 
+                        isActive ? 'bg-blue-100' : 'bg-gray-100'
+                      }`}>
+                        {isCompleted ? (
+                          <CheckCircle className="h-3 w-3 text-green-600" />
+                        ) : (
+                          <Icon className={`h-3 w-3 ${
+                            isActive ? 'text-blue-600' : 'text-gray-400'
+                          }`} />
+                        )}
+                      </div>
+                      
+                      <h4 className="font-semibold text-xs text-gray-900 mb-1">{step.title}</h4>
+                      
+                      {(isCompleted || (isActive && !isProcessingStep)) && (
+                        <Badge className={`${getScoreColor(step.score)} text-xs`}>
+                          {step.score.toUpperCase()}
+                        </Badge>
+                      )}
+                      
+                      {isProcessingStep && (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {index < scoringSteps.length - 1 && (
+                    <ArrowRight className="h-3 w-3 text-gray-400 mx-1 inline-block" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <ArrowRight className="h-3 w-3 text-blue-500 flex-shrink-0" />
+
+          {/* Final Result */}
+          <div className="flex-shrink-0">
+            {currentStep >= scoringSteps.length && (
+              <div className={`p-2 rounded-lg border-2 animate-scale-in ${
+                finalScore === 'high' ? 'border-green-400 bg-green-50' : 
+                finalScore === 'medium' ? 'border-yellow-400 bg-yellow-50' : 'border-red-400 bg-red-50'
+              }`}>
+                <div className="text-center">
+                  <Award className="h-4 w-4 text-green-600 mx-auto mb-1" />
+                  <Badge className={`text-xs ${getScoreColor(finalScore)}`}>
+                    {finalScore.toUpperCase()}
+                  </Badge>
+                  <p className="text-xs text-green-600 mt-1">85% Conv.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full max-w-4xl mx-auto p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl overflow-hidden">
