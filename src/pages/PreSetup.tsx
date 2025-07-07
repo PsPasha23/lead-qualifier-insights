@@ -7,30 +7,38 @@ import { Settings, Eye, CheckCircle, ArrowRight, Target, Zap, TrendingUp } from 
 import LeadScoringIllustration from "@/components/LeadScoringIllustration";
 import { useNavigate } from "react-router-dom";
 
+interface Step {
+  number: number;
+  title: string;
+  description: string;
+  status: "completed" | "current" | "pending";
+  icon: React.ComponentType<{ className?: string }>;
+}
+
 const PreSetup = () => {
   const navigate = useNavigate();
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
-  const steps = [
+  const steps: Step[] = [
     {
       number: 1,
       title: "Marketing Analytics Setup",
       description: "Configure your marketing tracking and attribution",
-      status: "completed" as const,
+      status: "completed",
       icon: TrendingUp
     },
     {
       number: 2,
       title: "Product Intelligence Setup", 
       description: "Set up product usage analytics and insights",
-      status: "completed" as const,
+      status: "completed",
       icon: Target
     },
     {
       number: 3,
       title: "Setup Score Lead",
       description: "Configure lead scoring criteria and thresholds",
-      status: "current" as const,
+      status: "current",
       icon: Settings
     }
   ];
