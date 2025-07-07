@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -381,33 +382,6 @@ const LeadScoringIllustration = () => {
             </CardContent>
           </Card>
         )}
-
-        {/* Process Benefits Summary */}
-        <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-          <CardContent className="p-6">
-            <h4 className="text-xl font-bold mb-4 text-center">
-              Your Lead Scoring ROI
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold">5x</div>
-                <p className="text-sm opacity-90">Faster Lead Processing</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">85%</div>
-                <p className="text-sm opacity-90">More Accurate Scoring</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">40%</div>
-                <p className="text-sm opacity-90">Higher Conversion Rate</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">60%</div>
-                <p className="text-sm opacity-90">Time Savings</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
