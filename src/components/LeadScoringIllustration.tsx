@@ -155,40 +155,21 @@ const LeadScoringIllustration = () => {
                           </div>
                         )}
                         
-                        {/* Settled lead representation - Fixed green box */}
+                        {/* Settled lead representation - Reverted to simple circular design */}
                         <div className={`transition-all duration-500 ${
                           leadVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                         }`}>
-                          <div className="relative p-6 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl border-2 border-green-400 shadow-lg">
-                            {/* Main user icon */}
-                            <div className="flex items-center justify-center mb-3">
-                              <div className="p-3 bg-green-500 rounded-full shadow-md">
-                                <User className="h-8 w-8 text-white" />
-                              </div>
-                            </div>
-                            
-                            {/* Lead info */}
-                            <div className="text-center space-y-1">
-                              <div className="text-sm font-semibold text-green-900">Sarah Johnson</div>
-                              <div className="text-xs text-green-700">VP of Marketing</div>
-                              <div className="text-xs text-green-600">TechCorp Inc.</div>
-                            </div>
+                          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-full border-2 border-green-300 relative">
+                            <User className="h-8 w-8 text-green-600" />
                             
                             {/* Success indicator */}
                             {leadVisible && (
-                              <div className="absolute -top-2 -right-2 animate-bounce">
-                                <div className="w-6 h-6 bg-green-500 rounded-full border-3 border-white flex items-center justify-center shadow-lg">
-                                  <CheckCircle className="h-3 w-3 text-white" />
+                              <div className="absolute -top-1 -right-1 animate-bounce">
+                                <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                                  <CheckCircle className="h-2 w-2 text-white" />
                                 </div>
                               </div>
                             )}
-                            
-                            {/* Quality indicator */}
-                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                              <Badge className="bg-green-600 text-white text-xs px-2 py-1 shadow-md">
-                                Quality Lead
-                              </Badge>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -338,61 +319,119 @@ const LeadScoringIllustration = () => {
           })}
         </div>
 
-        {/* Final Result with User Benefits */}
+        {/* Enhanced Final Result with Updated Lead Scoring Assessment */}
         {currentStep >= scoringSteps.length && (
           <Card className={`border-2 overflow-hidden animate-scale-in ${
             finalScore === 'high' ? 'border-green-400' : 
             finalScore === 'medium' ? 'border-yellow-400' : 'border-red-400'
           }`}>
             <div className={`h-2 bg-gradient-to-r ${getScoreGradient(finalScore)}`}></div>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Score Result */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center space-x-4 mb-4">
-                    <Award className="h-8 w-8 text-green-600" />
-                    <h3 className="text-2xl font-bold text-gray-900">Lead Quality Assessment</h3>
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                {/* Lead Profile Summary */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <User className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">{leadData.name}</h3>
+                        <p className="text-gray-600">{leadData.jobTitle} at {leadData.company}</p>
+                      </div>
+                    </div>
+                    <Badge className={`text-lg px-4 py-2 ${getScoreColor(finalScore)}`}>
+                      {finalScore.toUpperCase()} QUALITY
+                    </Badge>
                   </div>
                   
-                  <div className="space-y-3">
-                    <Badge className={`text-lg px-6 py-2 ${getScoreColor(finalScore)}`}>
-                      {finalScore.toUpperCase()} QUALITY LEAD
-                    </Badge>
-                    
-                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                      <p className="text-sm font-medium text-green-800 mb-1">Recommended Action</p>
-                      <p className="text-sm text-green-700">Priority follow-up within 24 hours</p>
-                      <p className="text-xs text-green-600 mt-1">85% likelihood of conversion</p>
-                    </div>
+                  {/* Scoring Breakdown */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {scoringSteps.map((step, index) => (
+                      <div key={step.id} className="text-center p-3 bg-white rounded-lg border">
+                        <step.icon className="h-5 w-5 mx-auto mb-2 text-gray-600" />
+                        <p className="text-xs font-medium text-gray-700 mb-1">{step.title}</p>
+                        <Badge className={`text-xs ${getScoreColor(step.score)}`}>
+                          {step.score.toUpperCase()}
+                        </Badge>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* User Benefits */}
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">What This Means for You:</h4>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                      <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-blue-900">Time Saved</p>
-                        <p className="text-xs text-blue-700">15 minutes of manual qualification avoided</p>
+                {/* Assessment Results Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Key Insights */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Award className="h-5 w-5 mr-2 text-blue-600" />
+                      Lead Assessment Summary
+                    </h4>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-start space-x-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-green-900">Perfect ICP Match</p>
+                          <p className="text-xs text-green-700">Senior executive at enterprise tech company with corporate email</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-blue-900">High Conversion Potential</p>
+                          <p className="text-xs text-blue-700">92% match with your best customers - VP level with active engagement</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <Target className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-purple-900">Immediate Action Required</p>
+                          <p className="text-xs text-purple-700">High-value prospect - assign to senior sales rep within 1 hour</p>
+                        </div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Business Impact */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Zap className="h-5 w-5 mr-2 text-green-600" />
+                      Business Impact
+                    </h4>
                     
-                    <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                      <TrendingUp className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-green-900">Higher Conversion</p>
-                        <p className="text-xs text-green-700">Focus on leads 3x more likely to buy</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                        <div className="text-2xl font-bold text-green-700">92%</div>
+                        <p className="text-xs text-green-600 font-medium">Conversion Likelihood</p>
+                      </div>
+                      
+                      <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                        <div className="text-2xl font-bold text-blue-700">$45K</div>
+                        <p className="text-xs text-blue-600 font-medium">Estimated Deal Size</p>
+                      </div>
+                      
+                      <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                        <div className="text-2xl font-bold text-purple-700">1 Hour</div>
+                        <p className="text-xs text-purple-600 font-medium">Response SLA</p>
+                      </div>
+                      
+                      <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200">
+                        <div className="text-2xl font-bold text-orange-700">High</div>
+                        <p className="text-xs text-orange-600 font-medium">Priority Level</p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
-                      <Target className="h-5 w-5 text-purple-600 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-purple-900">Better Prioritization</p>
-                        <p className="text-xs text-purple-700">Never miss a high-value opportunity</p>
+
+                    {/* Time Savings */}
+                    <div className="mt-4 p-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg text-white">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium opacity-90">Time Saved on Qualification</p>
+                          <p className="text-2xl font-bold">18 Minutes</p>
+                        </div>
+                        <Clock className="h-8 w-8 opacity-80" />
                       </div>
                     </div>
                   </div>
