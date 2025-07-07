@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -143,32 +142,11 @@ const LeadScoringIllustration = () => {
                   {/* Visual System Entry Point */}
                   <div className="relative mb-6">
                     <div className="flex items-center justify-center space-x-8">
-                      {/* System/Website Visual */}
-                      <div className="relative">
-                        <div className="w-24 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg border-2 border-blue-300 flex items-center justify-center">
-                          <div className="text-xs font-semibold text-blue-700">YOUR SYSTEM</div>
-                        </div>
-                        
-                        {/* Entry Door/Portal */}
-                        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2">
-                          <div className="w-4 h-8 bg-blue-400 rounded-r-lg border-2 border-blue-500 flex items-center justify-center">
-                            <ArrowRight className="h-3 w-3 text-white" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Entry Animation Arrow */}
-                      <div className="flex items-center">
-                        <ArrowRight className={`h-6 w-6 text-blue-500 transition-all duration-500 ${
-                          leadEntering ? 'animate-pulse text-green-500' : ''
-                        }`} />
-                      </div>
-
-                      {/* Lead Visual Representation */}
+                      {/* Lead Visual Representation - Now on the left */}
                       <div className="relative">
                         {/* Lead entering animation */}
                         {leadEntering && (
-                          <div className="absolute -left-20 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
+                          <div className="absolute -right-20 top-1/2 transform -translate-y-1/2 animate-slide-in-left">
                             <div className="flex items-center space-x-2 p-2 bg-white rounded-full border-2 border-green-400 shadow-lg">
                               <UserPlus className="h-4 w-4 text-green-600" />
                               <span className="text-xs font-medium text-green-700">New Lead</span>
@@ -191,6 +169,27 @@ const LeadScoringIllustration = () => {
                                 </div>
                               </div>
                             )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Entry Animation Arrow */}
+                      <div className="flex items-center">
+                        <ArrowRight className={`h-6 w-6 text-blue-500 transition-all duration-500 ${
+                          leadEntering ? 'animate-pulse text-green-500' : ''
+                        }`} />
+                      </div>
+
+                      {/* System/Website Visual - Now on the right */}
+                      <div className="relative">
+                        <div className="w-24 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg border-2 border-blue-300 flex items-center justify-center">
+                          <div className="text-xs font-semibold text-blue-700">YOUR SYSTEM</div>
+                        </div>
+                        
+                        {/* Entry Door/Portal */}
+                        <div className="absolute -left-2 top-1/2 transform -translate-y-1/2">
+                          <div className="w-4 h-8 bg-blue-400 rounded-l-lg border-2 border-blue-500 flex items-center justify-center">
+                            <ArrowRight className="h-3 w-3 text-white" />
                           </div>
                         </div>
                       </div>
