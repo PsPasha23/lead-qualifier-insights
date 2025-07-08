@@ -159,7 +159,7 @@ const LeadScoringIllustration = () => {
                         <div className={`transition-all duration-500 ${
                           leadVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                         }`}>
-                          <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-full border-2 border-green-300 relative">
+                          <div className="p-4 bg-white rounded-full border-2 border-green-300 relative">
                             <User className="h-8 w-8 text-green-600" />
                             
                             {/* Success indicator */}
@@ -359,79 +359,152 @@ const LeadScoringIllustration = () => {
                   </div>
                 </div>
 
-                {/* Assessment Results Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Key Insights */}
-                  <div className="space-y-4">
+                {/* Enhanced Assessment Results */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Comprehensive Lead Assessment */}
+                  <div className="lg:col-span-2 space-y-4">
                     <h4 className="text-lg font-semibold text-gray-900 flex items-center">
                       <Award className="h-5 w-5 mr-2 text-blue-600" />
-                      Lead Assessment Summary
+                      Comprehensive Lead Assessment
                     </h4>
                     
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3 p-4 bg-green-50 rounded-lg border border-green-200">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-medium text-green-900">Perfect ICP Match</p>
-                          <p className="text-xs text-green-700">Senior executive at enterprise tech company with corporate email</p>
+                    <div className="space-y-4">
+                      {/* ICP Match Analysis */}
+                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                        <div className="flex items-start space-x-3">
+                          <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-sm font-semibold text-green-900">Ideal Customer Profile Match</p>
+                              <Badge className="bg-green-600 text-white text-xs">98% Match</Badge>
+                            </div>
+                            <p className="text-xs text-green-700 mb-2">Perfect alignment with your target customer profile</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-green-800">Enterprise company size</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-green-800">Technology industry</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-green-800">C-level executive</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-green-800">Corporate email domain</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-medium text-blue-900">High Conversion Potential</p>
-                          <p className="text-xs text-blue-700">92% match with your best customers - VP level with active engagement</p>
+
+                      {/* Behavioral Analysis */}
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                        <div className="flex items-start space-x-3">
+                          <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-sm font-semibold text-blue-900">Engagement & Intent Signals</p>
+                              <Badge className="bg-blue-600 text-white text-xs">High Intent</Badge>
+                            </div>
+                            <p className="text-xs text-blue-700 mb-2">Strong buying signals detected across multiple touchpoints</p>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-blue-800">Website engagement</span>
+                                <span className="text-blue-600 font-medium">4 sessions, 12 min avg</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-blue-800">Content downloads</span>
+                                <span className="text-blue-600 font-medium">2 whitepapers</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-blue-800">Email engagement</span>
+                                <span className="text-blue-600 font-medium">85% open rate</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="flex items-start space-x-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                        <Target className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-medium text-purple-900">Immediate Action Required</p>
-                          <p className="text-xs text-purple-700">High-value prospect - assign to senior sales rep within 1 hour</p>
+
+                      {/* Sales Recommendation */}
+                      <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg p-4 border border-purple-200">
+                        <div className="flex items-start space-x-3">
+                          <Target className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-sm font-semibold text-purple-900">Sales Strategy Recommendation</p>
+                              <Badge className="bg-purple-600 text-white text-xs">Priority 1</Badge>
+                            </div>
+                            <p className="text-xs text-purple-700 mb-3">Immediate high-touch outreach recommended</p>
+                            <div className="bg-white rounded p-3 border border-purple-100">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <Clock className="h-4 w-4 text-purple-600" />
+                                <span className="text-xs font-medium text-purple-900">Recommended Actions</span>
+                              </div>
+                              <ul className="text-xs text-purple-800 space-y-1">
+                                <li>• Assign to senior sales rep within 30 minutes</li>
+                                <li>• Schedule demo call within 24 hours</li>
+                                <li>• Prepare enterprise package proposal</li>
+                                <li>• Include marketing automation case studies</li>
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Business Impact */}
+                  {/* Enhanced Business Impact Metrics */}
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-gray-900 flex items-center">
                       <Zap className="h-5 w-5 mr-2 text-green-600" />
                       Business Impact
                     </h4>
                     
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
-                        <div className="text-2xl font-bold text-green-700">92%</div>
-                        <p className="text-xs text-green-600 font-medium">Conversion Likelihood</p>
-                      </div>
-                      
-                      <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                        <div className="text-2xl font-bold text-blue-700">$45K</div>
-                        <p className="text-xs text-blue-600 font-medium">Estimated Deal Size</p>
-                      </div>
-                      
-                      <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                        <div className="text-2xl font-bold text-purple-700">1 Hour</div>
-                        <p className="text-xs text-purple-600 font-medium">Response SLA</p>
-                      </div>
-                      
-                      <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200">
-                        <div className="text-2xl font-bold text-orange-700">High</div>
-                        <p className="text-xs text-orange-600 font-medium">Priority Level</p>
-                      </div>
-                    </div>
-
-                    {/* Time Savings */}
-                    <div className="mt-4 p-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg text-white">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium opacity-90">Time Saved on Qualification</p>
-                          <p className="text-2xl font-bold">18 Minutes</p>
+                    <div className="space-y-3">
+                      {/* Primary Metrics */}
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-green-700 mb-1">94%</div>
+                          <p className="text-xs text-green-600 font-medium mb-2">Conversion Probability</p>
+                          <p className="text-xs text-green-700">Based on similar profiles</p>
                         </div>
-                        <Clock className="h-8 w-8 opacity-80" />
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-blue-700 mb-1">$52K</div>
+                          <p className="text-xs text-blue-600 font-medium mb-2">Projected Deal Value</p>
+                          <p className="text-xs text-blue-700">Enterprise package estimate</p>
+                        </div>
+                      </div>
+
+                      {/* Secondary Metrics */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                          <div className="text-xl font-bold text-purple-700">45min</div>
+                          <p className="text-xs text-purple-600 font-medium">Response SLA</p>
+                        </div>
+                        
+                        <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border border-orange-200">
+                          <div className="text-xl font-bold text-orange-700">90d</div>
+                          <p className="text-xs text-orange-600 font-medium">Sales Cycle</p>
+                        </div>
+                      </div>
+
+                      {/* ROI Summary */}
+                      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-4 text-white">
+                        <div className="text-center">
+                          <div className="flex items-center justify-center space-x-2 mb-2">
+                            <Award className="h-5 w-5" />
+                            <span className="text-sm font-semibold">Total Time Saved</span>
+                          </div>
+                          <div className="text-2xl font-bold mb-1">22 Minutes</div>
+                          <p className="text-xs opacity-90">Automated qualification & routing</p>
+                        </div>
                       </div>
                     </div>
                   </div>
