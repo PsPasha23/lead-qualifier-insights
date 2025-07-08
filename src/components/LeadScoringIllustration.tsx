@@ -18,6 +18,7 @@ const LeadScoringIllustration = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [leadVisible, setLeadVisible] = useState(false);
   const [leadEntering, setLeadEntering] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   const leadData = {
     name: 'Sarah Johnson',
@@ -65,6 +66,8 @@ const LeadScoringIllustration = () => {
   const finalScore = 'high';
 
   useEffect(() => {
+    if (animationComplete) return;
+
     // Start with lead entering animation
     const leadEnterTimer = setTimeout(() => {
       setLeadEntering(true);
@@ -83,17 +86,9 @@ const LeadScoringIllustration = () => {
           setIsProcessing(false);
         }, 1000);
       } else {
-        // Reset after showing final result
-        setTimeout(() => {
-          setCurrentStep(0);
-          setLeadVisible(false);
-          setLeadEntering(false);
-          setTimeout(() => setLeadEntering(true), 200);
-          setTimeout(() => {
-            setLeadVisible(true);
-            setLeadEntering(false);
-          }, 1000);
-        }, 4000);
+        // Animation complete - stop here
+        setAnimationComplete(true);
+        clearInterval(interval);
       }
     }, 2500);
 
@@ -102,7 +97,7 @@ const LeadScoringIllustration = () => {
       clearTimeout(leadTimer);
       clearTimeout(leadEnterTimer);
     };
-  }, [currentStep]);
+  }, [currentStep, animationComplete]);
 
   const getScoreColor = (score: 'high' | 'medium' | 'low') => {
     switch (score) {
@@ -142,7 +137,7 @@ const LeadScoringIllustration = () => {
                 <div className="flex items-center justify-center space-x-4 mb-3">
                   {/* Lead Visual */}
                   <div className="relative">
-                    {leadEntering && (
+                    {leadEntering && !animationComplete && (
                       <div className="absolute -left-16 top-1/2 transform -translate-y-1/2 animate-slide-in-right">
                         <div className="flex items-center space-x-1 p-1 bg-white rounded-full border border-green-400 shadow-md">
                           <UserPlus className="h-3 w-3 text-green-600" />
@@ -157,7 +152,7 @@ const LeadScoringIllustration = () => {
                       <div className="p-2 bg-white rounded-full border-2 border-green-300 relative">
                         <User className="h-6 w-6 text-green-600" />
                         {leadVisible && (
-                          <div className="absolute -top-1 -right-1 animate-bounce">
+                          <div className={`absolute -top-1 -right-1 ${!animationComplete ? 'animate-bounce' : ''}`}>
                             <div className="w-3 h-3 bg-green-500 rounded-full border border-white flex items-center justify-center">
                               <CheckCircle className="h-2 w-2 text-white" />
                             </div>
@@ -168,7 +163,7 @@ const LeadScoringIllustration = () => {
                   </div>
 
                   <ArrowRight className={`h-5 w-5 text-blue-500 transition-all duration-500 ${
-                    leadEntering ? 'animate-pulse text-green-500' : ''
+                    leadEntering && !animationComplete ? 'animate-pulse text-green-500' : ''
                   }`} />
 
                   <div className="w-16 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded border border-blue-300 flex items-center justify-center">
